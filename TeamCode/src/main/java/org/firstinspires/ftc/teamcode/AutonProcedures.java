@@ -42,15 +42,19 @@ class AutonProcedures {
     private static final int ANGLE_TOLERANCE = 40;
 
     private double startYaw, endYaw;
+    private ElapsedTime elapsedTime;
+    enum StartPosition {
+        CRATER,
+        DEPOT
+    }
     private GoldVision goldVision;
     private Hardware robot;
     private HardwareMap hardwareMap;
     private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND;
     private VuforiaLocalizer vuforia;
 
-    private ElapsedTime elapsedTime = new ElapsedTime();
-
-    void init(Hardware robot, HardwareMap hardwareMap) {
+    void init(ElapsedTime elapsedTime, Hardware robot, HardwareMap hardwareMap) {
+        this.elapsedTime = elapsedTime;
         this.robot = robot;
         this.hardwareMap = hardwareMap;
 
@@ -66,20 +70,26 @@ class AutonProcedures {
         vuforia.enableConvertFrameToBitmap();
     }
 
-    void depot() {
+    void start(StartPosition startPosition) {
         deploy();
         goToBlock();
-        goToDepot();
+        if (startPosition == StartPosition.CRATER)
+            goToDepot();
         dropIdol();
+        park();
     }
-
-    void crater() {}
 
     private void deploy() {}
 
-    private void goToDepot() {}
+    private void goToBlock() {
+        blockPos = getBlockPos(1000);
 
-    private void park() {}
+        if (blockPos == RIGHT_POSITION || blockPos == LEFT_POSITION) {
+            turnToBlock();
+            robot.goDistance(36, 1);
+        } else if (blockPos == DEAD_CENTER)
+            robot.goDistance(30, 1); //65, test out 30
+    }
 
     private int getBlockPos(int mSec) {
         int blockPos = 0;
@@ -183,22 +193,14 @@ class AutonProcedures {
         endYaw = robot.getYaw();
     }
 
-    private void goToBlock () {
-        blockPos = getBlockPos(1000);
+//    private void awayFromBlock() {
+//        if (blockPos == RIGHT_POSITION || blockPos == LEFT_POSITION)
+//            robot.goDistance(-30, 1);
+//        else if (blockPos == DEAD_CENTER)
+//            robot.goDistance(-60, 1);
+//    }
 
-        if (blockPos == RIGHT_POSITION || blockPos == LEFT_POSITION) {
-            turnToBlock();
-            robot.goDistance(36, 1);
-        } else if (blockPos == DEAD_CENTER)
-            robot.goDistance(65, 1);
-    }
-
-    private void awayFromBlock() {
-        if (blockPos == RIGHT_POSITION || blockPos == LEFT_POSITION)
-            robot.goDistance(-30, 1);
-        else if (blockPos == DEAD_CENTER)
-            robot.goDistance(-60, 1);
-    }
+    private void goToDepot() {}
 
     private void dropIdol() {
         int[] color = new int[3];
@@ -237,4 +239,6 @@ class AutonProcedures {
 
         return isBetween;
     }
+
+    private void park() {}
 }
