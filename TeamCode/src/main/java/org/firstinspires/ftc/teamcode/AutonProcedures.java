@@ -27,9 +27,6 @@ class AutonProcedures {
     private static final int LEFT_POSITION = 3;
     private static final int DEAD_CENTER = 4;
 
-    private static final int TAPE_NOT_FOUND = 0;
-    private static final int TAPE_COLOR_BLUE = 1;
-    private static final int TAPE_COLOR_RED = 2;
     private static final int[] MIN_BLUE = {15, 30, 40};
     private static final int[] MAX_BLUE = {35, 50, 55};
     private static final int[] MIN_RED = {80, 30, 30};
@@ -51,7 +48,7 @@ class AutonProcedures {
     private GoldVision goldVision;
     private Hardware robot;
     private HardwareMap hardwareMap;
-    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND;
+    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND, degToTurn = 22;
     private StartPosition startPosition;
     private VuforiaLocalizer vuforia;
 
@@ -75,9 +72,8 @@ class AutonProcedures {
 
     void start() {
         deploy();
-//        goToBlock();
+        goToBlock();
         goToDepot();
-        dropIdol();
         park();
     }
 
@@ -86,11 +82,15 @@ class AutonProcedures {
     private void goToBlock() {
         blockPos = getBlockPos(1000);
 
-        //If the block isn't found, we don't run the code to sample
-        if (blockPos == RIGHT_POSITION || blockPos == LEFT_POSITION) {
-            turnToBlock();
+        if (blockPos == RIGHT_POSITION) {
+//            turnToBlock();
+            degToTurn *= -1;
+            robot.turnDegrees(degToTurn, 0.25);
             robot.goDistance(36, 1);
-        } else if (blockPos == DEAD_CENTER)
+        } else if (blockPos == LEFT_POSITION) {
+            robot.turnDegrees(degToTurn, 0.25);
+            robot.goDistance(36, 1);
+        } else if (blockPos == DEAD_CENTER || blockPos == CENTER_POSITION)
             robot.goDistance(30, 1); //65, test out 30
     }
 
@@ -235,71 +235,65 @@ class AutonProcedures {
 //        return blockPosRel;
 //    }
 
-    private void turnToBlock() {
-        if (blockPos != BLOCK_NOT_FOUND) {
-            startYaw = robot.getYaw();
-
-            turn:
-            while (getBlockPos(150) != DEAD_CENTER) {
-                //Move motors then stop them after a short amount of time
-                switch (blockPos) {
-                    case RIGHT_POSITION:
-                        if (robot.getYaw() - startYaw < -ANGLE_TOLERANCE)
-                            while (robot.getYaw() < -ANGLE_TOLERANCE / 2)
-                                robot.setMotorPowers(1, -1);
-                        else
-                            robot.setMotorPowers(-FIND_BLOCK_SPEED, FIND_BLOCK_SPEED);
-                        break;
-                    case LEFT_POSITION:
-                        if (robot.getYaw() - startYaw > ANGLE_TOLERANCE)
-                            while (robot.getYaw() > ANGLE_TOLERANCE / 2)
-                                robot.setMotorPowers(-1, 1);
-                        robot.setMotorPowers(FIND_BLOCK_SPEED, -FIND_BLOCK_SPEED);
-                        break;
-                    default:
-                        break turn;
-                }
-                try {
-                    Thread.sleep(175);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                robot.setMotorPowers(0, 0);
-            }
-        }
-
-        endYaw = robot.getYaw();
-    }
-
-//    private void awayFromBlock() {
-//        if (blockPos == RIGHT_POSITION || blockPos == LEFT_POSITION)
-//            robot.goDistance(-30, 1);
-//        else if (blockPos == DEAD_CENTER)
-//            robot.goDistance(-60, 1);
+//    private void turnToBlock() {
+//        if (blockPos != BLOCK_NOT_FOUND) {
+//            startYaw = robot.getYaw();
+//
+//            turn:
+//            while (getBlockPos(150) != DEAD_CENTER) {
+//                //Move motors then stop them after a short amount of time
+//                switch (blockPos) {
+//                    case RIGHT_POSITION:
+//                        if (robot.getYaw() - startYaw < -ANGLE_TOLERANCE)
+//                            while (robot.getYaw() < -ANGLE_TOLERANCE / 2)
+//                                robot.setMotorPowers(1, -1);
+//                        else
+//                            robot.setMotorPowers(-FIND_BLOCK_SPEED, FIND_BLOCK_SPEED);
+//                        break;
+//                    case LEFT_POSITION:
+//                        if (robot.getYaw() - startYaw > ANGLE_TOLERANCE)
+//                            while (robot.getYaw() > ANGLE_TOLERANCE / 2)
+//                                robot.setMotorPowers(-1, 1);
+//                        robot.setMotorPowers(FIND_BLOCK_SPEED, -FIND_BLOCK_SPEED);
+//                        break;
+//                    default:
+//                        break turn;
+//                }
+//                try {
+//                    Thread.sleep(175);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                robot.setMotorPowers(0, 0);
+//            }
+//        }
+//
+//        endYaw = robot.getYaw();
 //    }
 
     private void goToDepot() {
-//        if (blockPos == BLOCK_NOT_FOUND) {
-//            //Whatever we want to do
-//        } else {
-            if (startPosition == StartPosition.CRATER) {
+        if (startPosition == StartPosition.CRATER) {
 
-            } else {
-                robot.turnDegrees(endYaw * -2, 1);
-            }
-//        }
+        } else {
+            robot.turnDegrees(degToTurn * -2, 0.25);
+            dropIdol();
+        }
     }
 
     private void dropIdol() {
         int[] color = new int[3];
-        int tapeColor = TAPE_NOT_FOUND;
 
         robot.setMotorPowers(1);
 
-        while (!isBetween(color, MIN_BLUE, MAX_BLUE) && !isBetween(color, MIN_RED, MAX_RED)) {
+        while (true) {
             color[0] = robot.getColorSensor().red();
             color[1] = robot.getColorSensor().green();
             color[2] = robot.getColorSensor().blue();
+
+            if (isBetween(color, MIN_BLUE, MAX_BLUE))
+                break;
+            else if (isBetween(color, MIN_RED, MAX_RED))
+                break;
         }
 
         robot.setMotorPowers(0);
@@ -310,6 +304,7 @@ class AutonProcedures {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         robot.moveServo(1);
         try {
             Thread.sleep(2000);
