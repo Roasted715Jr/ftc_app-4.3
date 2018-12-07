@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Hardware {
+    private static final String TAG = "Hardware";
+
     private static final double INCH_PER_MM = 0.03937007874;
     private static final double WHEEL_DIAMETER_INCH = 100.965 * INCH_PER_MM;
     private static final double WHEEL_CIRCUMFERENCE_INCH = WHEEL_DIAMETER_INCH * Math.PI;
@@ -213,29 +215,32 @@ public class Hardware {
     void turnDegrees(double degreesToTurn, double speed) {
         double startYaw = getYaw();
         double target = startYaw + degreesToTurn;
-        double targetExtra = 0;
 
-        if (target > 180) {
-            targetExtra = target - 180;
-            target = -180;
-        } else if (target < -180) {
-            targetExtra = target + 180;
-            target = 180;
-        }
+//        Log.i(TAG, "Target: " + target);
+//        Log.i(TAG, "Start Yaw: " + startYaw);
+//        Log.i(TAG, "Degreees to Turn: " + degreesToTurn);
 
         if (degreesToTurn < 0) { //Turn right
             while (getYaw() > target)
                 setMotorPowers(-speed, speed);
-            if (targetExtra != 0)
-                while (getYaw() > targetExtra)
-                    setMotorPowers(-speed, speed);
             setMotorPowers(0);
         } else { //Turn left
             while (getYaw() < target)
                 setMotorPowers(speed, -speed);
-            if (targetExtra != 0)
-                while (getYaw() < targetExtra)
-                    setMotorPowers(speed, -speed);
+            setMotorPowers(0);
+        }
+    }
+
+    void turnToDegree(double target, double speed) {
+        double startYaw = getYaw();
+
+        if (startYaw > target) { //Turn right
+            while (getYaw() > target)
+                setMotorPowers(-speed, speed);
+            setMotorPowers(0);
+        } else { //Turn left
+            while (getYaw() < target)
+                setMotorPowers(speed, -speed);
             setMotorPowers(0);
         }
     }

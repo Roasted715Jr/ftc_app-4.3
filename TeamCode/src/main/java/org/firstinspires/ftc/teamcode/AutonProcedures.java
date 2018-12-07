@@ -81,7 +81,8 @@ class AutonProcedures {
     private void deploy() {}
 
     private void goToBlock() {
-        blockPos = getBlockPos(1000);
+//        blockPos = getBlockPos(1000);
+        blockPos = CENTER_POSITION;
 
         if (blockPos == RIGHT_POSITION) {
             degToTurn = -22;
@@ -279,19 +280,20 @@ class AutonProcedures {
         if (startPosition == StartPosition.CRATER) {
             //Move away from the block
             robot.goDistance(-blockDist + 5, 1);
-            robot.turnDegrees(-degToTurn + 90, TURN_SPEED);
+            robot.turnToDegree(45, TURN_SPEED);
             robot.goDistance(36, 1);
             robot.turnDegrees(45, TURN_SPEED);
         } else
             robot.turnDegrees(degToTurn * -2, TURN_SPEED);
 
+        robot.goDistance(6, 1);
         dropIdol();
     }
 
     private void dropIdol() {
         int[] color = new int[3];
 
-        robot.setMotorPowers(1);
+        robot.setMotorPowers(0.25);
 
         while (true) {
             color[0] = robot.getColorSensor().red();
@@ -303,6 +305,9 @@ class AutonProcedures {
             else if (isBetween(color, MIN_RED, MAX_RED))
                 break;
         }
+
+        if (startPosition == StartPosition.DEPOT)
+            robot.goDistance(12, 0.5);
 
         robot.setMotorPowers(0);
 
@@ -335,7 +340,13 @@ class AutonProcedures {
     }
 
     private void park() {
-        robot.turnDegrees(180, TURN_SPEED);
-        robot.goDistance(72, 1);
+        if (startPosition == StartPosition.CRATER)
+            robot.goDistance(-75, 1);
+        else {
+            robot.turnToDegree(-45, TURN_SPEED);
+            robot.goDistance(-75, 1);
+        }
+
+        robot.setMotorPowers(0);
     }
 }

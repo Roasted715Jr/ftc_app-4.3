@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import java.util.Locale;
 
 @TeleOp(name = "Turn w/ Gyro", group = "CompBot")
-@Disabled
+//@Disabled
 public class BasicTurnGyro extends LinearOpMode {
     private static final int TAPE_NOT_FOUND = 0;
     private static final int TAPE_COLOR_BLUE = 1;
@@ -30,14 +30,15 @@ public class BasicTurnGyro extends LinearOpMode {
 
         waitForStart();
 
-        int deg = -22;
+        int deg = 22;
         double speed = 0.25;
-        robot.turnDegrees(deg, speed);
+//        robot.turnDegrees(deg, speed);
+        robot.turnToDegree(deg, speed);
 
-        robot.goDistance(36, 1);
-        robot.turnDegrees(deg * -2, speed);
+//        robot.goDistance(36, 1);
+//        robot.turnToDegree(deg, speed);
 
-        dropIdol();
+//        dropIdol();
 
         while (opModeIsActive()) {
             telemetry.addData("yaw", robot.getYaw());
