@@ -75,7 +75,7 @@ class AutonProcedures {
 
     void start() {
         deploy();
-        goToBlock();
+//        goToBlock();
         goToDepot();
         dropIdol();
         park();
@@ -279,36 +279,43 @@ class AutonProcedures {
 //    }
 
     private void goToDepot() {
-        if (blockPos == BLOCK_NOT_FOUND) {
+//        if (blockPos == BLOCK_NOT_FOUND) {
+//            //Whatever we want to do
+//        } else {
+            if (startPosition == StartPosition.CRATER) {
 
-        } else {
-
-        }
+            } else {
+                robot.turnDegrees(endYaw * -2, 1);
+            }
+//        }
     }
 
     private void dropIdol() {
-//        int[] color = new int[3];
-//        int tapeColor = TAPE_NOT_FOUND;
-//        while (!isBetween(color, MIN_BLUE, MAX_BLUE) && !isBetween(color, MIN_RED, MAX_RED)) {
-//            color[0] = robot.getColorSensor().red();
-//            color[1] = robot.getColorSensor().green();
-//            color[2] = robot.getColorSensor().blue();
-//        }
-//
-//        robot.setMotorPowers(0);
-//
-//        robot.moveServo(0);
-//        try {
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        robot.moveServo(1);
-//        try {
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        int[] color = new int[3];
+        int tapeColor = TAPE_NOT_FOUND;
+
+        robot.setMotorPowers(1);
+
+        while (!isBetween(color, MIN_BLUE, MAX_BLUE) && !isBetween(color, MIN_RED, MAX_RED)) {
+            color[0] = robot.getColorSensor().red();
+            color[1] = robot.getColorSensor().green();
+            color[2] = robot.getColorSensor().blue();
+        }
+
+        robot.setMotorPowers(0);
+
+        robot.moveServo(0);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        robot.moveServo(1);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean isBetween(int[] val, int[] min, int[] max) {

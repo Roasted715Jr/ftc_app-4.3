@@ -163,9 +163,7 @@ public class Hardware {
         else if (robotType == RobotType.COMP_BOT)
                 goEncoderCounts((int) (revolutions * NEVEREST_40_COUNTS_PER_REVOLUTION), speed);
 
-//        waitForMotorsToStop();
-//        setMotorPowers(0);
-//        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 //    void goDistance(double rightInchToTravel, double leftInchToTravel, double rightSpeed, double leftSpeed) {
@@ -192,6 +190,10 @@ public class Hardware {
     private void goEncoderCounts(int counts, double speed) {
         setMotorTargetPositions(counts);
         setMotorPowers(speed);
+
+        while (rightMotor.isBusy() || leftMotor.isBusy()) {
+            //Wait
+        }
     }
 
 //    private void goEncoderCounts(int rightCounts, int leftCounts, double rightSpeed, double leftSpeed) {
