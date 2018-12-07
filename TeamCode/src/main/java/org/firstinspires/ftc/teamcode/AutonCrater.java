@@ -14,7 +14,7 @@ public class AutonCrater extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        autonProcedures.init(elapsedTime, robot, hardwareMap);
+        autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.StartPosition.CRATER);
 
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Status", "Waiting in init");
@@ -23,9 +23,13 @@ public class AutonCrater extends LinearOpMode {
 
         telemetry.clearAll();
 
-        autonProcedures.start(AutonProcedures.StartPosition.CRATER);
+        telemetry.addData("Progress", "Starting autonomous");
+        telemetry.update();
+        autonProcedures.start();
 
         while (opModeIsActive()) {
+            telemetry.addData("Progress", "Finished with autonomous");
+            telemetry.update();
             idle();
         }
     }

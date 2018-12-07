@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import java.util.Locale;
 
 @TeleOp(name = "Turn w/ Gyro", group = "CompBot")
-//@Disabled
+@Disabled
 public class BasicTurnGyro extends LinearOpMode {
     private Hardware robot = new Hardware();
 

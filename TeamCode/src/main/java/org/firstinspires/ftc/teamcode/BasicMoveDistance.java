@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Encoder Tutorial", group = "CompBot")
+@TeleOp(name = "Encoder Tutorial", group = "CompBot")
 //@Disabled
 public class BasicMoveDistance extends LinearOpMode {
     private Hardware robot = new Hardware();
@@ -27,8 +27,6 @@ public class BasicMoveDistance extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.setMotorPowers(0);
-
         //Much appreciated code from a user
 //        DcMotor motor = ...;
 //        int offset = motor.getCurrentPosition();
@@ -37,6 +35,9 @@ public class BasicMoveDistance extends LinearOpMode {
 //            int pos = motor.getCurrentPosition() - offset;
 //            motor.setPower(pos / (double) rampTicks);
 //        }
+
+//        robot.setMotorRunModes(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.setMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         while (opModeIsActive()) {
             telemetry.addData("Wheel Circumference", robot.getWheelCircumferenceInch());

@@ -38,6 +38,7 @@ class AutonProcedures {
     private static final int IMG_CUTOFF_Y = 300; //115
     private static final int IMG_FIRST_SECTION_X = 110;
     private static final int IMG_THIRD_SECTION_X = 290;
+    private static final double FIND_BLOCK_SPEED = 0.2;
 
     private static final int ANGLE_TOLERANCE = 40;
 
@@ -50,13 +51,15 @@ class AutonProcedures {
     private GoldVision goldVision;
     private Hardware robot;
     private HardwareMap hardwareMap;
-    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND;
+    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND;
+    private StartPosition startPosition;
     private VuforiaLocalizer vuforia;
 
-    void init(ElapsedTime elapsedTime, Hardware robot, HardwareMap hardwareMap) {
+    void init(ElapsedTime elapsedTime, Hardware robot, HardwareMap hardwareMap, StartPosition startPosition) {
         this.elapsedTime = elapsedTime;
         this.robot = robot;
         this.hardwareMap = hardwareMap;
+        this.startPosition = startPosition;
 
         robot.init(hardwareMap);
         robot.initCamera();
@@ -70,11 +73,10 @@ class AutonProcedures {
         vuforia.enableConvertFrameToBitmap();
     }
 
-    void start(StartPosition startPosition) {
+    void start() {
         deploy();
         goToBlock();
-        if (startPosition == StartPosition.CRATER)
-            goToDepot();
+        goToDepot();
         dropIdol();
         park();
     }
@@ -84,6 +86,7 @@ class AutonProcedures {
     private void goToBlock() {
         blockPos = getBlockPos(1000);
 
+        //If the block isn't found, we don't run the code to sample
         if (blockPos == RIGHT_POSITION || blockPos == LEFT_POSITION) {
             turnToBlock();
             robot.goDistance(36, 1);
@@ -92,7 +95,7 @@ class AutonProcedures {
     }
 
     private int getBlockPos(int mSec) {
-        int blockPos = 0;
+        int blockPos = BLOCK_NOT_FOUND;
 
         lCounter = 0;
         cCounter = 0;
@@ -157,12 +160,87 @@ class AutonProcedures {
         return blockPos;
     }
 
+//    private int getBlockPos(int mSec) {
+//        blockPosRel = BLOCK_NOT_FOUND;
+//
+////        lCounter = 0;
+////        cCounter = 0;
+////        dcCounter = 0;
+////        rCounter = 0;
+//
+//        elapsedTime.reset();
+//
+//        while (elapsedTime.milliseconds() <= mSec)
+//            vuforia.getFrameOnce(Continuation.create(ThreadPool.getDefault(), new Consumer<Frame>() {
+//                @Override
+//                public void accept(Frame frame) {
+//                    Bitmap bitmap = vuforia.convertFrameToBitmap(frame);
+//                    Mat img = new Mat();
+//                    if (bitmap != null) {
+//                        Utils.bitmapToMat(bitmap, img);
+//                    }
+//
+//                    goldVision.processFrame(img, null);
+//
+//                    List<MatOfPoint> contours = goldVision.getContours();
+//
+//                    for (int i = 0; i < contours.size(); i++) {
+//                        // get the bounding rectangle of a single contour, we use it to get the x/y center
+//                        // yes there's a mass center using Imgproc.moments but w/e
+//                        Rect boundingRect = Imgproc.boundingRect(contours.get(i));
+//
+//                        double boundingRectX = (boundingRect.x + boundingRect.width) / 2;
+//                        double boundingRectY = (boundingRect.y + boundingRect.height) / 2;
+//
+//                        if (boundingRectY <= IMG_CUTOFF_Y) {
+//                            if (boundingRectX < IMG_FIRST_SECTION_X - 10) {
+////                                rCounter++; //These are reversed now that the camera will be upside down
+//                                blockPosRel = RIGHT_POSITION;
+//                                break;
+//                            } else if (boundingRectX > IMG_FIRST_SECTION_X + 75 && boundingRectX < IMG_THIRD_SECTION_X - 75) {
+////                                dcCounter++;
+//                                blockPosRel = DEAD_CENTER;
+//                                break;
+//                            } else if (boundingRectX > IMG_FIRST_SECTION_X + 10 && boundingRectX < IMG_THIRD_SECTION_X - 10) {
+////                                cCounter++;
+//                                blockPosRel = CENTER_POSITION;
+//                                break;
+//                            } else if (boundingRectX > IMG_THIRD_SECTION_X + 10) {
+////                                lCounter++;
+//                                blockPosRel = LEFT_POSITION;
+//                                break;
+//                            }
+//
+////                            telemetry.addData("Coordinates", "(" + boundingRectX + ", " + boundingRectY + ")");
+//                        }
+//                    }
+//                }
+//            }));
+//
+////        if (rCounter > cCounter)
+////            if (rCounter > lCounter)
+////                blockPosRel = RIGHT_POSITION;
+////            else
+////                blockPosRel = LEFT_POSITION;
+////        else if (lCounter > cCounter)
+////            blockPosRel = LEFT_POSITION;
+////        else if (dcCounter > cCounter)
+////            blockPosRel = DEAD_CENTER;
+////        else if (cCounter > 0)
+////            blockPosRel = CENTER_POSITION;
+//
+////        telemetry.addData("blockPos1", blockPos);
+////        telemetry.update();
+//
+//        return blockPosRel;
+//    }
+
     private void turnToBlock() {
         if (blockPos != BLOCK_NOT_FOUND) {
             startYaw = robot.getYaw();
 
             turn:
-            while (getBlockPos(100) != DEAD_CENTER) {
+            while (getBlockPos(150) != DEAD_CENTER) {
                 //Move motors then stop them after a short amount of time
                 switch (blockPos) {
                     case RIGHT_POSITION:
@@ -170,19 +248,19 @@ class AutonProcedures {
                             while (robot.getYaw() < -ANGLE_TOLERANCE / 2)
                                 robot.setMotorPowers(1, -1);
                         else
-                            robot.setMotorPowers(-0.25, 0.25);
+                            robot.setMotorPowers(-FIND_BLOCK_SPEED, FIND_BLOCK_SPEED);
                         break;
                     case LEFT_POSITION:
                         if (robot.getYaw() - startYaw > ANGLE_TOLERANCE)
                             while (robot.getYaw() > ANGLE_TOLERANCE / 2)
                                 robot.setMotorPowers(-1, 1);
-                        robot.setMotorPowers(0.25, -0.25);
+                        robot.setMotorPowers(FIND_BLOCK_SPEED, -FIND_BLOCK_SPEED);
                         break;
                     default:
                         break turn;
                 }
                 try {
-                    Thread.sleep(125);
+                    Thread.sleep(175);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -200,31 +278,37 @@ class AutonProcedures {
 //            robot.goDistance(-60, 1);
 //    }
 
-    private void goToDepot() {}
+    private void goToDepot() {
+        if (blockPos == BLOCK_NOT_FOUND) {
+
+        } else {
+
+        }
+    }
 
     private void dropIdol() {
-        int[] color = new int[3];
-        int tapeColor = TAPE_NOT_FOUND;
-        while (!isBetween(color, MIN_BLUE, MAX_BLUE) && !isBetween(color, MIN_RED, MAX_RED)) {
-            color[0] = robot.getColorSensor().red();
-            color[1] = robot.getColorSensor().green();
-            color[2] = robot.getColorSensor().blue();
-        }
-
-        robot.setMotorPowers(0);
-
-        robot.moveServo(0);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        robot.moveServo(1);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        int[] color = new int[3];
+//        int tapeColor = TAPE_NOT_FOUND;
+//        while (!isBetween(color, MIN_BLUE, MAX_BLUE) && !isBetween(color, MIN_RED, MAX_RED)) {
+//            color[0] = robot.getColorSensor().red();
+//            color[1] = robot.getColorSensor().green();
+//            color[2] = robot.getColorSensor().blue();
+//        }
+//
+//        robot.setMotorPowers(0);
+//
+//        robot.moveServo(0);
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        robot.moveServo(1);
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private boolean isBetween(int[] val, int[] min, int[] max) {

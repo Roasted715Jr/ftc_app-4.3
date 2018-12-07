@@ -100,8 +100,7 @@ public class Hardware {
                 break;
         }
 
-        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        setMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         setMotorPowers(0, 0);
 
@@ -169,36 +168,36 @@ public class Hardware {
 //        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    void goDistance(double rightInchToTravel, double leftInchToTravel, double rightSpeed, double leftSpeed) {
-        double rightRevolutions = rightInchToTravel / (WHEEL_CIRCUMFERENCE_INCH * PINION_TEETH / SPUR_TEETH);
-        double leftRevolutions = leftInchToTravel / (WHEEL_CIRCUMFERENCE_INCH * PINION_TEETH / SPUR_TEETH);
-
-        //Rev Core Hex Motors:
-        //  Motor: 4 counts/revolution
-        //  Output: 288 counts/revolution
-        //Neverest 40:
-        //  Motor: 7 counts/revolution
-        //  Output: 1120 counts/revolution
-
-        if (robotType == RobotType.MATT_TINY_BOT || robotType == RobotType.TINY_BOT)
-                goEncoderCounts((int) (rightInchToTravel * REV_CORE_HEX_COUNTS_PER_REVOLUTION), (int) (leftInchToTravel * REV_CORE_HEX_COUNTS_PER_REVOLUTION), rightSpeed, leftSpeed);
-        else if (robotType == RobotType.COMP_BOT)
-                goEncoderCounts((int) (rightInchToTravel * NEVEREST_40_COUNTS_PER_REVOLUTION), (int) (leftInchToTravel * NEVEREST_40_COUNTS_PER_REVOLUTION), rightSpeed, leftSpeed);
-
-        waitForMotorsToStop();
-        setMotorPowers(0);
-        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
+//    void goDistance(double rightInchToTravel, double leftInchToTravel, double rightSpeed, double leftSpeed) {
+//        double rightRevolutions = rightInchToTravel / (WHEEL_CIRCUMFERENCE_INCH * PINION_TEETH / SPUR_TEETH);
+//        double leftRevolutions = leftInchToTravel / (WHEEL_CIRCUMFERENCE_INCH * PINION_TEETH / SPUR_TEETH);
+//
+//        //Rev Core Hex Motors:
+//        //  Motor: 4 counts/revolution
+//        //  Output: 288 counts/revolution
+//        //Neverest 40:
+//        //  Motor: 7 counts/revolution
+//        //  Output: 1120 counts/revolution
+//
+//        if (robotType == RobotType.MATT_TINY_BOT || robotType == RobotType.TINY_BOT)
+//                goEncoderCounts((int) (rightInchToTravel * REV_CORE_HEX_COUNTS_PER_REVOLUTION), (int) (leftInchToTravel * REV_CORE_HEX_COUNTS_PER_REVOLUTION), rightSpeed, leftSpeed);
+//        else if (robotType == RobotType.COMP_BOT)
+//                goEncoderCounts((int) (rightInchToTravel * NEVEREST_40_COUNTS_PER_REVOLUTION), (int) (leftInchToTravel * NEVEREST_40_COUNTS_PER_REVOLUTION), rightSpeed, leftSpeed);
+//
+//        waitForMotorsToStop();
+//        setMotorPowers(0);
+//        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//    }
 
     private void goEncoderCounts(int counts, double speed) {
         setMotorTargetPositions(counts);
         setMotorPowers(speed);
     }
 
-    private void goEncoderCounts(int rightCounts, int leftCounts, double rightSpeed, double leftSpeed) {
-        setMotorTargetPositions(rightCounts, leftCounts);
-        setMotorPowers(rightSpeed, leftSpeed);
-    }
+//    private void goEncoderCounts(int rightCounts, int leftCounts, double rightSpeed, double leftSpeed) {
+//        setMotorTargetPositions(rightCounts, leftCounts);
+//        setMotorPowers(rightSpeed, leftSpeed);
+//    }
 
     void moveServo(double pos) {
         servo.setPosition(pos);
@@ -222,6 +221,11 @@ public class Hardware {
 
         rightMotor.setMode(runMode);
         leftMotor.setMode(runMode);
+    }
+
+    void setMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        rightMotor.setZeroPowerBehavior(zeroPowerBehavior);
+        leftMotor.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
     private void setMotorTargetPositions(int pos) {
@@ -252,12 +256,6 @@ public class Hardware {
             while (getYaw() < target)
                 setMotorPowers(speed, -speed);
             setMotorPowers(0);
-        }
-    }
-
-    private void waitForMotorsToStop() {
-        while (rightMotor.isBusy() || leftMotor.isBusy()) {
-            //Wait
         }
     }
 }
