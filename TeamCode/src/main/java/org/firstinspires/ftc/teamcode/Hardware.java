@@ -166,40 +166,12 @@ public class Hardware {
         setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-//    void goDistance(double rightInchToTravel, double leftInchToTravel, double rightSpeed, double leftSpeed) {
-//        double rightRevolutions = rightInchToTravel / (WHEEL_CIRCUMFERENCE_INCH * PINION_TEETH / SPUR_TEETH);
-//        double leftRevolutions = leftInchToTravel / (WHEEL_CIRCUMFERENCE_INCH * PINION_TEETH / SPUR_TEETH);
-//
-//        //Rev Core Hex Motors:
-//        //  Motor: 4 counts/revolution
-//        //  Output: 288 counts/revolution
-//        //Neverest 40:
-//        //  Motor: 7 counts/revolution
-//        //  Output: 1120 counts/revolution
-//
-//        if (robotType == RobotType.MATT_TINY_BOT || robotType == RobotType.TINY_BOT)
-//                goEncoderCounts((int) (rightInchToTravel * REV_CORE_HEX_COUNTS_PER_REVOLUTION), (int) (leftInchToTravel * REV_CORE_HEX_COUNTS_PER_REVOLUTION), rightSpeed, leftSpeed);
-//        else if (robotType == RobotType.COMP_BOT)
-//                goEncoderCounts((int) (rightInchToTravel * NEVEREST_40_COUNTS_PER_REVOLUTION), (int) (leftInchToTravel * NEVEREST_40_COUNTS_PER_REVOLUTION), rightSpeed, leftSpeed);
-//
-//        waitForMotorsToStop();
-//        setMotorPowers(0);
-//        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//    }
-
     private void goEncoderCounts(int counts, double speed) {
         setMotorTargetPositions(counts);
         setMotorPowers(speed);
 
-        while (rightMotor.isBusy() || leftMotor.isBusy()) {
-            //Wait
-        }
+        while (rightMotor.isBusy() || leftMotor.isBusy()) {}
     }
-
-//    private void goEncoderCounts(int rightCounts, int leftCounts, double rightSpeed, double leftSpeed) {
-//        setMotorTargetPositions(rightCounts, leftCounts);
-//        setMotorPowers(rightSpeed, leftSpeed);
-//    }
 
     void moveServo(double pos) {
         servo.setPosition(pos);
@@ -238,25 +210,32 @@ public class Hardware {
         setMotorRunModes(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    private void setMotorTargetPositions(int rightPos, int leftPos) {
-        //If we are changing the target we should also reset the encoders
-        setMotorRunModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setTargetPosition(rightPos);
-        leftMotor.setTargetPosition(leftPos);
-        setMotorRunModes(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
     void turnDegrees(double degreesToTurn, double speed) {
         double startYaw = getYaw();
         double target = startYaw + degreesToTurn;
+        double targetExtra = 0;
+
+        if (target > 180) {
+            targetExtra = target - 180;
+            target = -180;
+        } else if (target < -180) {
+            targetExtra = target + 180;
+            target = 180;
+        }
 
         if (degreesToTurn < 0) { //Turn right
             while (getYaw() > target)
                 setMotorPowers(-speed, speed);
+            if (targetExtra != 0)
+                while (getYaw() > targetExtra)
+                    setMotorPowers(-speed, speed);
             setMotorPowers(0);
         } else { //Turn left
             while (getYaw() < target)
                 setMotorPowers(speed, -speed);
+            if (targetExtra != 0)
+                while (getYaw() < targetExtra)
+                    setMotorPowers(speed, -speed);
             setMotorPowers(0);
         }
     }

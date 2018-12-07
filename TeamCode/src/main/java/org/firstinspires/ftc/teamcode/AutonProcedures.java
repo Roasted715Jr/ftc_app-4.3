@@ -38,6 +38,7 @@ class AutonProcedures {
     private static final double FIND_BLOCK_SPEED = 0.2;
 
     private static final int ANGLE_TOLERANCE = 40;
+    private static final double TURN_SPEED = 0.25;
 
     private double startYaw, endYaw;
     private ElapsedTime elapsedTime;
@@ -48,7 +49,7 @@ class AutonProcedures {
     private GoldVision goldVision;
     private Hardware robot;
     private HardwareMap hardwareMap;
-    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND, degToTurn = 22;
+    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND, degToTurn = 22, blockDist;
     private StartPosition startPosition;
     private VuforiaLocalizer vuforia;
 
@@ -83,15 +84,18 @@ class AutonProcedures {
         blockPos = getBlockPos(1000);
 
         if (blockPos == RIGHT_POSITION) {
-//            turnToBlock();
-            degToTurn *= -1;
-            robot.turnDegrees(degToTurn, 0.25);
-            robot.goDistance(36, 1);
+            degToTurn = -22;
+            blockDist = 36;
         } else if (blockPos == LEFT_POSITION) {
-            robot.turnDegrees(degToTurn, 0.25);
-            robot.goDistance(36, 1);
-        } else if (blockPos == DEAD_CENTER || blockPos == CENTER_POSITION)
-            robot.goDistance(30, 1); //65, test out 30
+            degToTurn = 22;
+            blockDist = 36;
+        } else if (blockPos == DEAD_CENTER || blockPos == CENTER_POSITION) {
+            degToTurn = 0;
+            blockDist = 30;
+        }
+
+        robot.turnDegrees(degToTurn, TURN_SPEED);
+        robot.goDistance(blockDist, 1);
     }
 
     private int getBlockPos(int mSec) {
@@ -273,11 +277,15 @@ class AutonProcedures {
 
     private void goToDepot() {
         if (startPosition == StartPosition.CRATER) {
+            //Move away from the block
+            robot.goDistance(-blockDist + 5, 1);
+            robot.turnDegrees(-degToTurn + 90, TURN_SPEED);
+            robot.goDistance(36, 1);
+            robot.turnDegrees(45, TURN_SPEED);
+        } else
+            robot.turnDegrees(degToTurn * -2, TURN_SPEED);
 
-        } else {
-            robot.turnDegrees(degToTurn * -2, 0.25);
-            dropIdol();
-        }
+        dropIdol();
     }
 
     private void dropIdol() {
@@ -326,5 +334,8 @@ class AutonProcedures {
         return isBetween;
     }
 
-    private void park() {}
+    private void park() {
+        robot.turnDegrees(180, TURN_SPEED);
+        robot.goDistance(72, 1);
+    }
 }
