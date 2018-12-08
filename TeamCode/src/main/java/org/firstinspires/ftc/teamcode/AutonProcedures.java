@@ -32,6 +32,7 @@ class AutonProcedures {
     private static final int[] MIN_RED = {80, 30, 30};
     private static final int[] MAX_RED = {90, 50, 45};
 
+
     private static final int IMG_CUTOFF_Y = 300; //115
     private static final int IMG_FIRST_SECTION_X = 110;
     private static final int IMG_THIRD_SECTION_X = 290;
@@ -81,8 +82,8 @@ class AutonProcedures {
     private void deploy() {}
 
     private void goToBlock() {
-//        blockPos = getBlockPos(1000);
-        blockPos = CENTER_POSITION;
+        blockPos = getBlockPos(1000);
+//        blockPos = CENTER_POSITION;
 
         if (blockPos == RIGHT_POSITION) {
             degToTurn = -22;
@@ -286,7 +287,7 @@ class AutonProcedures {
         } else
             robot.turnDegrees(degToTurn * -2, TURN_SPEED);
 
-        robot.goDistance(6, 1);
+        robot.goDistance(9, 1);
         dropIdol();
     }
 
@@ -302,7 +303,7 @@ class AutonProcedures {
 
             if (isBetween(color, MIN_BLUE, MAX_BLUE))
                 break;
-            else if (isBetween(color, MIN_RED, MAX_RED))
+            if (isBetween(color, MIN_RED, MAX_RED))
                 break;
         }
 

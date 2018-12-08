@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Teleop Tank", group = "CompBot")
-@Disabled
-public class BasicTeleOp extends LinearOpMode {
+@TeleOp(name = "Tank", group = "CompBot")
+//@Disabled
+public class BasicTank extends LinearOpMode {
     private Hardware robot = new Hardware();
 
     @Override
