@@ -39,6 +39,8 @@ public class AutonDepot extends LinearOpMode {
 
         telemetry.clearAll();
 
+//        isStopRequested();
+
         telemetry.addData("Progress", "Starting autonomous");
         telemetry.update();
         autonProcedures.start();

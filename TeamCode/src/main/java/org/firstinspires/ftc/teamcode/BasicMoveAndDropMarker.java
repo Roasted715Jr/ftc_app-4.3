@@ -10,10 +10,14 @@ public class BasicMoveAndDropMarker extends LinearOpMode {
     private static final int TAPE_NOT_FOUND = 0;
     private static final int TAPE_COLOR_BLUE = 1;
     private static final int TAPE_COLOR_RED = 2;
+//    private static final int[] MIN_BLUE = {15, 30, 40};
     private static final int[] MIN_BLUE = {15, 30, 40};
+//    private static final int[] MAX_BLUE = {35, 50, 55};
     private static final int[] MAX_BLUE = {35, 50, 55};
-    private static final int[] MIN_RED = {80, 30, 30};
-    private static final int[] MAX_RED = {90, 50, 45};
+//    private static final int[] MIN_RED = {80, 30, 30};
+    private static final int[] MIN_RED = {1500, 30, 30};
+//    private static final int[] MAX_RED = {90, 50, 45};
+    private static final int[] MAX_RED = {1700, 50, 45};
 
     private Hardware robot = new Hardware();
 
@@ -28,7 +32,7 @@ public class BasicMoveAndDropMarker extends LinearOpMode {
 
         robot.setMotorPowers(1);
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             color[0] = robot.getColorSensor().red();
             color[1] = robot.getColorSensor().green();
             color[2] = robot.getColorSensor().blue();

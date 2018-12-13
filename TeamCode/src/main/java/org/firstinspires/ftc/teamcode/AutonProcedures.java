@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -86,11 +87,11 @@ class AutonProcedures {
 //        blockPos = CENTER_POSITION;
 
         if (blockPos == RIGHT_POSITION) {
-            degToTurn = -22;
-            blockDist = 36;
+            degToTurn = -20;
+            blockDist = 32;
         } else if (blockPos == LEFT_POSITION) {
-            degToTurn = 22;
-            blockDist = 36;
+            degToTurn = 20;
+            blockDist = 32;
         } else if (blockPos == DEAD_CENTER || blockPos == CENTER_POSITION) {
             degToTurn = 0;
             blockDist = 30;
@@ -293,18 +294,31 @@ class AutonProcedures {
 
     private void dropIdol() {
         int[] color = new int[3];
+        float[] hsvValues = new float[3];
 
-        robot.setMotorPowers(0.25);
+//        robot.setMotorPowers(0.25);
+        robot.setMotorPowers(0.5);
 
         while (true) {
             color[0] = robot.getColorSensor().red();
             color[1] = robot.getColorSensor().green();
             color[2] = robot.getColorSensor().blue();
 
-            if (isBetween(color, MIN_BLUE, MAX_BLUE))
+
+            Color.RGBToHSV(robot.getColorSensor().red(),
+                     robot.getColorSensor().green(),
+                    robot.getColorSensor().blue(),
+                    hsvValues);
+
+            if (color[0] > 1000 && (hsvValues[0] < 10 || hsvValues[0] > 350))
                 break;
-            if (isBetween(color, MIN_RED, MAX_RED))
+            else if (color[2] > 1000 && hsvValues[2] < 230 && hsvValues[2] > 190)
                 break;
+
+//            if (isBetween(color, MIN_BLUE, MAX_BLUE))
+//                break;
+//            if (isBetween(color, MIN_RED, MAX_RED))
+//                break;
         }
 
         if (startPosition == StartPosition.DEPOT)
@@ -342,10 +356,12 @@ class AutonProcedures {
 
     private void park() {
         if (startPosition == StartPosition.CRATER)
-            robot.goDistance(-75, 1);
+            robot.goDistance(-77, 1);
         else {
-            robot.turnToDegree(-45, TURN_SPEED);
-            robot.goDistance(-75, 1);
+            robot.turnToDegree(-60, TURN_SPEED);
+            robot.goDistance(-20, 1);
+            robot.turnToDegree(-50, TURN_SPEED);
+            robot.goDistance(-57, 1);
         }
 
         robot.setMotorPowers(0);
