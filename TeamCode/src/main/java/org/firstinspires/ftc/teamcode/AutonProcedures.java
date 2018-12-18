@@ -21,7 +21,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
-class AutonProcedures {
+class AutonProcedures<T extends RunningOpMode> implements Runnable {
     private static final int BLOCK_NOT_FOUND = 0;
     private static final int RIGHT_POSITION = 1;
     private static final int CENTER_POSITION = 2;
@@ -53,13 +53,15 @@ class AutonProcedures {
     private HardwareMap hardwareMap;
     private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND, degToTurn = 22, blockDist;
     private StartPosition startPosition;
+    private T runningOpMode;
     private VuforiaLocalizer vuforia;
 
-    void init(ElapsedTime elapsedTime, Hardware robot, HardwareMap hardwareMap, StartPosition startPosition) {
+    void init(ElapsedTime elapsedTime, Hardware robot, HardwareMap hardwareMap, StartPosition startPosition, T runningOpMode) {
         this.elapsedTime = elapsedTime;
         this.robot = robot;
         this.hardwareMap = hardwareMap;
         this.startPosition = startPosition;
+        this.runningOpMode = runningOpMode;
 
         robot.init(hardwareMap);
         robot.initCamera();
@@ -73,11 +75,24 @@ class AutonProcedures {
         vuforia.enableConvertFrameToBitmap();
     }
 
+    private void displayTelemetry(String msg) {
+        runningOpMode.displayTelemetry(msg);
+    }
+
+    public void run() {
+        start();
+    }
+
     void start() {
+        displayTelemetry("Deploying");
         deploy();
+        displayTelemetry("Going to block");
         goToBlock();
+        displayTelemetry("Going to depot");
         goToDepot();
+        displayTelemetry("Parking");
         park();
+        displayTelemetry("Done");
     }
 
     private void deploy() {}
