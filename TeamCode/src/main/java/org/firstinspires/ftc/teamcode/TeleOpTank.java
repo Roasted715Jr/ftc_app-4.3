@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Tank", group = "CompBot")
 //@Disabled
-public class BasicTank extends LinearOpMode {
+public class TeleOpTank extends LinearOpMode {
     private Hardware robot = new Hardware();
 
     @Override
@@ -28,6 +28,13 @@ public class BasicTank extends LinearOpMode {
             telemetry.addData("rightValue", "%.2f", rightValue);
 
             telemetry.update();
+
+            if (gamepad2.right_bumper) {
+                telemetry.addData("Status", "Lifting robot");
+                telemetry.update();
+                robot.liftCounts(-7000, 1);
+                robot.liftCounts(100, 1);
+            }
 
             //Run this 25 times/second
             sleep(40);

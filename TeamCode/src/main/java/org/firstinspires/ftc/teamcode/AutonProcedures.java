@@ -21,7 +21,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
-class AutonProcedures<T extends RunningOpMode> implements Runnable {
+class AutonProcedures<T extends RunningOpMode> {
     private static final int BLOCK_NOT_FOUND = 0;
     private static final int RIGHT_POSITION = 1;
     private static final int CENTER_POSITION = 2;
@@ -79,10 +79,6 @@ class AutonProcedures<T extends RunningOpMode> implements Runnable {
         runningOpMode.displayTelemetry(msg);
     }
 
-    public void run() {
-        start();
-    }
-
     void start() {
         displayTelemetry("Deploying");
         deploy();
@@ -126,7 +122,7 @@ class AutonProcedures<T extends RunningOpMode> implements Runnable {
 
         elapsedTime.reset();
 
-        while (elapsedTime.milliseconds() <= mSec)
+        while (elapsedTime.milliseconds() <= mSec && robot.getNotStopped())
             vuforia.getFrameOnce(Continuation.create(ThreadPool.getDefault(), new Consumer<Frame>() {
                 @Override
                 public void accept(Frame frame) {
@@ -311,10 +307,9 @@ class AutonProcedures<T extends RunningOpMode> implements Runnable {
         int[] color = new int[3];
         float[] hsvValues = new float[3];
 
-//        robot.setMotorPowers(0.25);
-        robot.setMotorPowers(0.5);
+        robot.setMotorPowers(0.75);
 
-        while (true) {
+        while (true && robot.getNotStopped()) {
             color[0] = robot.getColorSensor().red();
             color[1] = robot.getColorSensor().green();
             color[2] = robot.getColorSensor().blue();
@@ -349,11 +344,11 @@ class AutonProcedures<T extends RunningOpMode> implements Runnable {
         }
 
         robot.moveServo(1);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private boolean isBetween(int[] val, int[] min, int[] max) {

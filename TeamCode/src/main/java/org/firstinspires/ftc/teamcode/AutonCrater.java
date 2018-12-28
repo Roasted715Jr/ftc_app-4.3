@@ -11,11 +11,20 @@ public class AutonCrater extends LinearOpMode implements RunningOpMode {
     private AutonProcedures<AutonCrater> autonProcedures = new AutonProcedures<>();
     private Hardware robot = new Hardware();
     private ElapsedTime elapsedTime = new ElapsedTime();
+    private Runnable auton;
 
     @Override
     public void runOpMode() throws InterruptedException {
         autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.StartPosition.CRATER, this);
-        Thread thread = new Thread(autonProcedures);
+
+        auton = new Runnable() {
+            @Override
+            public void run() {
+                autonProcedures.start();
+            }
+        };
+
+        Thread thread = new Thread(auton);
 
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Status", "Waiting in init");
@@ -25,18 +34,11 @@ public class AutonCrater extends LinearOpMode implements RunningOpMode {
         telemetry.clearAll();
 
         thread.start();
-//        autonProcedures.start();
 
         while (opModeIsActive()) {
             if (isStopRequested()) {
-                try {
-                    thread.stop();
-                } catch (ThreadDeath e) {
-                    telemetry.addData("Thread", "Program killed. You murderer");
-                    telemetry.update();
-                } finally {
-                    robot.setMotorPowers(0);
-                }
+                robot.stop();
+                thread.stop();
             }
 
             idle();

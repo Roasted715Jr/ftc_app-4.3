@@ -38,11 +38,13 @@ public class Hardware {
         TINY_BOT
     }
 
-    private HardwareMap hardwareMap;
+    private boolean notStopped = true;
     private BNO055IMU imu;
     private ColorSensor colorSensor;
+    private HardwareMap hardwareMap;
     DcMotor rightMotor;
     DcMotor leftMotor;
+    DcMotor liftMotor;
     private Servo servo;
 
     private WebcamName webcamName;
@@ -74,6 +76,8 @@ public class Hardware {
                 rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
                 leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
                 rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+                liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
                 colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
                 servo = hardwareMap.get(Servo.class, "servo");
@@ -126,6 +130,10 @@ public class Hardware {
         return isBetween;
     }
 
+    boolean getNotStopped() {
+        return notStopped;
+    }
+
     double getWheelCircumferenceInch() {
         return WHEEL_CIRCUMFERENCE_INCH;
     }
@@ -172,11 +180,30 @@ public class Hardware {
         setMotorTargetPositions(counts);
         setMotorPowers(speed);
 
-        while (rightMotor.isBusy() || leftMotor.isBusy()) {}
+        while ((rightMotor.isBusy() || leftMotor.isBusy()) && notStopped) {}
+    }
+
+    void liftCounts(int counts, double speed) {
+        //537.6
+
+        //7000 to bottom of hook
+        //8500 to top of hook
+
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setTargetPosition(counts);
+        liftMotor.setPower(speed);
+
+        while (liftMotor.isBusy()) {}
+
+        liftMotor.setPower(0);
     }
 
     void moveServo(double pos) {
         servo.setPosition(pos);
+    }
+
+    void setLiftPower(double liftSpeed) {
+        liftMotor.setPower(liftSpeed);
     }
 
     void setMotorPowers(double motorSpeeds) {
@@ -212,6 +239,11 @@ public class Hardware {
         setMotorRunModes(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
+    void stop() {
+        setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setMotorPowers(0);
+    }
+
     void turnDegrees(double degreesToTurn, double speed) {
         double startYaw = getYaw();
         double target = startYaw + degreesToTurn;
@@ -221,11 +253,11 @@ public class Hardware {
 //        Log.i(TAG, "Degreees to Turn: " + degreesToTurn);
 
         if (degreesToTurn < 0) { //Turn right
-            while (getYaw() > target)
+            while (getYaw() > target && notStopped)
                 setMotorPowers(-speed, speed);
             setMotorPowers(0);
         } else { //Turn left
-            while (getYaw() < target)
+            while (getYaw() < target && notStopped)
                 setMotorPowers(speed, -speed);
             setMotorPowers(0);
         }
@@ -235,11 +267,11 @@ public class Hardware {
         double startYaw = getYaw();
 
         if (startYaw > target) { //Turn right
-            while (getYaw() > target)
+            while (getYaw() > target && notStopped)
                 setMotorPowers(-speed, speed);
             setMotorPowers(0);
         } else { //Turn left
-            while (getYaw() < target)
+            while (getYaw() < target && notStopped)
                 setMotorPowers(speed, -speed);
             setMotorPowers(0);
         }

@@ -27,12 +27,21 @@ public class AutonDepot extends LinearOpMode implements RunningOpMode {
     private AutonProcedures<AutonDepot> autonProcedures = new AutonProcedures<>();
     private Hardware robot = new Hardware();
     private ElapsedTime elapsedTime = new ElapsedTime();
+    private Runnable auton;
 
     @Override
     public void runOpMode() throws InterruptedException {
         autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.StartPosition.DEPOT, this);
-        Thread thread = new Thread(autonProcedures);
-        thread.start();
+        auton = new Runnable() {
+            @Override
+            public void run() {
+                autonProcedures.start();
+            }
+        };
+
+        Thread thread = new Thread(auton);
+
+        waitForStart();
 
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Status", "Waiting in init");
@@ -41,21 +50,12 @@ public class AutonDepot extends LinearOpMode implements RunningOpMode {
 
         telemetry.clearAll();
 
-//        isStopRequested();
-
         thread.start();
-//        autonProcedures.start();
 
         while (opModeIsActive()) {
             if (isStopRequested()) {
-                try {
-                    thread.stop();
-                } catch (ThreadDeath e) {
-                    telemetry.addData("Thread", "Program killed. You murderer");
-                    telemetry.update();
-                } finally {
-                    robot.setMotorPowers(0);
-                }
+                robot.stop();
+                robot.setMotorPowers(0);
             }
 
             idle();
@@ -63,7 +63,7 @@ public class AutonDepot extends LinearOpMode implements RunningOpMode {
     }
 
     public void displayTelemetry(String msg) {
-        telemetry.addData("Auton Crater", msg);
+        telemetry.addData("Auton Depot", msg);
         telemetry.update();
     }
 }
