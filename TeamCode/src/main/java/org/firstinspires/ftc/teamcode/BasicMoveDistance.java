@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "Encoder Tutorial", group = "CompBot")
-//@Disabled
+@Disabled
 public class BasicMoveDistance extends LinearOpMode {
     private Hardware robot = new Hardware();
 

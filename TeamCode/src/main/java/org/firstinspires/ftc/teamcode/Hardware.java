@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -14,17 +12,14 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Hardware {
-    private static final String TAG = "Hardware";
-
     private static final double INCH_PER_MM = 0.03937007874;
     private static final double WHEEL_DIAMETER_INCH = 100.965 * INCH_PER_MM;
     private static final double WHEEL_CIRCUMFERENCE_INCH = WHEEL_DIAMETER_INCH * Math.PI;
     private static final int REV_CORE_HEX_COUNTS_PER_REVOLUTION = 288;
     private static final int NEVEREST_40_COUNTS_PER_REVOLUTION = 1120;
-    private static final int NEVEREST_20_COUNTS_PER_REVOLUTION = 537; //Is actually 537.6, but setting the motors requires an int so it will truncate to 537 anyways
+//    private static final int NEVEREST_20_COUNTS_PER_REVOLUTION = 537; //Is actually 537.6, but setting the motors requires an int so it will truncate to 537 anyways
 
     private static final RobotType robotType = RobotType.COMP_BOT;
 
@@ -117,18 +112,18 @@ public class Hardware {
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
     }
 
-    private boolean isBetween(int[] val, int[] min, int[] max) {
-        boolean isBetween = true;
-
-        for (int i = 0; i < val.length; i++) {
-            if (!(min[i] <= val[i] && val[i] <= max[i])) {
-                isBetween = false;
-                break;
-            }
-        }
-
-        return isBetween;
-    }
+//    private boolean isBetween(int[] val, int[] min, int[] max) {
+//        boolean isBetween = true;
+//
+//        for (int i = 0; i < val.length; i++) {
+//            if (!(min[i] <= val[i] && val[i] <= max[i])) {
+//                isBetween = false;
+//                break;
+//            }
+//        }
+//
+//        return isBetween;
+//    }
 
     double getWheelCircumferenceInch() {
         return WHEEL_CIRCUMFERENCE_INCH;

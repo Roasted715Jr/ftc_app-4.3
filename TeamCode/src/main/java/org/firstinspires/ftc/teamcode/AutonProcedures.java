@@ -32,16 +32,16 @@ class AutonProcedures<T extends RunningOpMode> {
 //    private static final int[] MAX_BLUE = {35, 50, 55};
 //    private static final int[] MIN_RED = {80, 30, 30};
 //    private static final int[] MAX_RED = {90, 50, 45};
-    
+
     private static final int IMG_CUTOFF_Y = 300; //115
     private static final int IMG_FIRST_SECTION_X = 110;
     private static final int IMG_THIRD_SECTION_X = 290;
     private static final double FIND_BLOCK_SPEED = 0.2;
 
-    private static final int ANGLE_TOLERANCE = 40;
+//    private static final int ANGLE_TOLERANCE = 40;
     private static final double TURN_SPEED = 0.25;
 
-    private double startYaw, endYaw;
+//    private double startYaw, endYaw;
     private ElapsedTime elapsedTime;
     enum StartPosition {
         CRATER,
@@ -352,18 +352,18 @@ class AutonProcedures<T extends RunningOpMode> {
         robot.moveServo(1);
     }
 
-    private boolean isBetween(int[] val, int[] min, int[] max) {
-        boolean isBetween = true;
-
-        for (int i = 0; i < val.length; i++) {
-            if (!(min[i] <= val[i] && val[i] <= max[i])) {
-                isBetween = false;
-                break;
-            }
-        }
-
-        return isBetween;
-    }
+//    private boolean isBetween(int[] val, int[] min, int[] max) {
+//        boolean isBetween = true;
+//
+//        for (int i = 0; i < val.length; i++) {
+//            if (!(min[i] <= val[i] && val[i] <= max[i])) {
+//                isBetween = false;
+//                break;
+//            }
+//        }
+//
+//        return isBetween;
+//    }
 
     private void park() {
         if (startPosition == StartPosition.CRATER)

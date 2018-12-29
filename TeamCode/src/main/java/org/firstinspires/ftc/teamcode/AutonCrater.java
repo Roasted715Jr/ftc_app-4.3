@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Crater", group = "CompBot")
-//@Disabled
 public class AutonCrater extends LinearOpMode implements RunningOpMode {
 
     private AutonProcedures<AutonCrater> autonProcedures = new AutonProcedures<>();

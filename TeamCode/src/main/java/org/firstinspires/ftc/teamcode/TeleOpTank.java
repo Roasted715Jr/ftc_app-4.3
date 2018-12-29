@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Tank", group = "CompBot")
-//@Disabled
 public class TeleOpTank extends LinearOpMode {
     private Hardware robot = new Hardware();
 

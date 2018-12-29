@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Drop Marker", group = "CompBot")
-//@Disabled
+@Disabled
 public class BasicMoveAndDropMarker extends LinearOpMode {
     private static final int TAPE_NOT_FOUND = 0;
     private static final int TAPE_COLOR_BLUE = 1;
