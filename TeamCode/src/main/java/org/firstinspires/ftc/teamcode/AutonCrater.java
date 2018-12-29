@@ -17,19 +17,14 @@ public class AutonCrater extends LinearOpMode implements RunningOpMode {
     public void runOpMode() throws InterruptedException {
         autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.StartPosition.CRATER, this);
 
-        auton = new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 autonProcedures.start();
             }
-        };
+        });
 
-        Thread thread = new Thread(auton);
-
-        while (!opModeIsActive() && !isStopRequested()) {
-            telemetry.addData("Status", "Waiting in init");
-            telemetry.update();
-        }
+        waitForStart();
 
         telemetry.clearAll();
 
@@ -48,5 +43,13 @@ public class AutonCrater extends LinearOpMode implements RunningOpMode {
     public void displayTelemetry(String msg) {
         telemetry.addData("Auton Crater", msg);
         telemetry.update();
+    }
+
+    @Override
+    public void waitForStart() {
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Status", "Waiting in init");
+            telemetry.update();
+        }
     }
 }

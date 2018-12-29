@@ -24,6 +24,7 @@ public class Hardware {
     private static final double WHEEL_CIRCUMFERENCE_INCH = WHEEL_DIAMETER_INCH * Math.PI;
     private static final int REV_CORE_HEX_COUNTS_PER_REVOLUTION = 288;
     private static final int NEVEREST_40_COUNTS_PER_REVOLUTION = 1120;
+    private static final int NEVEREST_20_COUNTS_PER_REVOLUTION = 537; //Is actually 537.6, but setting the motors requires an int so it will truncate to 537 anyways
 
     private static final RobotType robotType = RobotType.COMP_BOT;
 
@@ -38,7 +39,6 @@ public class Hardware {
         TINY_BOT
     }
 
-    private boolean notStopped = true;
     private BNO055IMU imu;
     private ColorSensor colorSensor;
     private HardwareMap hardwareMap;
@@ -77,7 +77,7 @@ public class Hardware {
                 leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
                 rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
                 liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-                liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
                 servo = hardwareMap.get(Servo.class, "servo");
@@ -130,10 +130,6 @@ public class Hardware {
         return isBetween;
     }
 
-    boolean getNotStopped() {
-        return notStopped;
-    }
-
     double getWheelCircumferenceInch() {
         return WHEEL_CIRCUMFERENCE_INCH;
     }
@@ -180,22 +176,37 @@ public class Hardware {
         setMotorTargetPositions(counts);
         setMotorPowers(speed);
 
-        while ((rightMotor.isBusy() || leftMotor.isBusy()) && notStopped) {}
+        while ((rightMotor.isBusy() || leftMotor.isBusy())) {}
     }
 
-    void liftCounts(int counts, double speed) {
-        //537.6
+    void liftExtendFull() {
+        liftToPos(8500);
+    }
 
+    void liftExtendPartial() {
+        liftToPos(7000);
+    }
+
+    void liftReset() {
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    void liftRetract() {
+        liftToPos(100);
+    }
+
+    void liftToPos(int counts) {
+        //The value is negative for some odd reason
         //7000 to bottom of hook
         //8500 to top of hook
 
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setTargetPosition(counts);
-        liftMotor.setPower(speed);
+        liftMotor.setTargetPosition(-counts);
+        setLiftPower(1);
 
         while (liftMotor.isBusy()) {}
 
-        liftMotor.setPower(0);
+        setLiftPower(0);
     }
 
     void moveServo(double pos) {
@@ -253,11 +264,11 @@ public class Hardware {
 //        Log.i(TAG, "Degreees to Turn: " + degreesToTurn);
 
         if (degreesToTurn < 0) { //Turn right
-            while (getYaw() > target && notStopped)
+            while (getYaw() > target)
                 setMotorPowers(-speed, speed);
             setMotorPowers(0);
         } else { //Turn left
-            while (getYaw() < target && notStopped)
+            while (getYaw() < target)
                 setMotorPowers(speed, -speed);
             setMotorPowers(0);
         }
@@ -267,11 +278,11 @@ public class Hardware {
         double startYaw = getYaw();
 
         if (startYaw > target) { //Turn right
-            while (getYaw() > target && notStopped)
+            while (getYaw() > target)
                 setMotorPowers(-speed, speed);
             setMotorPowers(0);
         } else { //Turn left
-            while (getYaw() < target && notStopped)
+            while (getYaw() < target)
                 setMotorPowers(speed, -speed);
             setMotorPowers(0);
         }

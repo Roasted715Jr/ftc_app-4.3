@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Lift Robot", group = "CompBot")
+@Disabled
 public class BasicLiftRobot extends LinearOpMode {
     Hardware robot = new Hardware();
 
@@ -17,7 +19,7 @@ public class BasicLiftRobot extends LinearOpMode {
 
 //        sleep(1000);
 
-//        robot.liftCounts(535 * 16, 1);
+//        robot.liftToPos(535 * 16);
 
         while (opModeIsActive()) {
             telemetry.addData("Encoder counts", robot.liftMotor.getCurrentPosition());

@@ -80,18 +80,32 @@ class AutonProcedures<T extends RunningOpMode> {
     }
 
     void start() {
-        displayTelemetry("Deploying");
-        deploy();
-        displayTelemetry("Going to block");
-        goToBlock();
-        displayTelemetry("Going to depot");
-        goToDepot();
-        displayTelemetry("Parking");
-        park();
+//        displayTelemetry("Deploying");
+//        deploy();
+//        displayTelemetry("Going to block");
+//        goToBlock();
+//        displayTelemetry("Going to depot");
+//        goToDepot();
+
+        dropIdol();
+
+//        displayTelemetry("Parking");
+//        park();
         displayTelemetry("Done");
     }
 
-    private void deploy() {}
+    private void deploy() {
+        robot.liftExtendFull();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                robot.liftRetract();
+            }
+        });
+
+        thread.run();
+    }
 
     private void goToBlock() {
         blockPos = getBlockPos(1000);
@@ -122,7 +136,7 @@ class AutonProcedures<T extends RunningOpMode> {
 
         elapsedTime.reset();
 
-        while (elapsedTime.milliseconds() <= mSec && robot.getNotStopped())
+        while (elapsedTime.milliseconds() <= mSec)
             vuforia.getFrameOnce(Continuation.create(ThreadPool.getDefault(), new Consumer<Frame>() {
                 @Override
                 public void accept(Frame frame) {
@@ -304,31 +318,27 @@ class AutonProcedures<T extends RunningOpMode> {
     }
 
     private void dropIdol() {
-        int[] color = new int[3];
+        int red;
+        int blue;
         float[] hsvValues = new float[3];
+        float hue;
 
         robot.setMotorPowers(0.75);
 
-        while (true && robot.getNotStopped()) {
-            color[0] = robot.getColorSensor().red();
-            color[1] = robot.getColorSensor().green();
-            color[2] = robot.getColorSensor().blue();
-
+        while (true) {
+            red = robot.getColorSensor().red();
+            blue = robot.getColorSensor().blue();
 
             Color.RGBToHSV(robot.getColorSensor().red(),
                      robot.getColorSensor().green(),
                     robot.getColorSensor().blue(),
                     hsvValues);
+            hue = hsvValues[0];
 
-            if (color[0] > 1000 && (hsvValues[0] < 10 || hsvValues[0] > 350))
+            if (red > 1000 && (hue < 10 || hue > 350))
                 break;
-            else if (color[2] > 1000 && hsvValues[2] < 230 && hsvValues[2] > 190)
+            else if (blue > 1000 && (hue < 230 && hue > 190))
                 break;
-
-//            if (isBetween(color, MIN_BLUE, MAX_BLUE))
-//                break;
-//            if (isBetween(color, MIN_RED, MAX_RED))
-//                break;
         }
 
         if (startPosition == StartPosition.DEPOT)
@@ -344,11 +354,6 @@ class AutonProcedures<T extends RunningOpMode> {
         }
 
         robot.moveServo(1);
-//        try {
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
     }
 
     private boolean isBetween(int[] val, int[] min, int[] max) {

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -32,8 +31,8 @@ public class TeleOpTank extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 telemetry.addData("Status", "Lifting robot");
                 telemetry.update();
-                robot.liftCounts(-7000, 1);
-                robot.liftCounts(100, 1);
+                robot.liftToPos(7000);
+                robot.liftToPos(100);
             }
 
             //Run this 25 times/second

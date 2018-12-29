@@ -32,21 +32,15 @@ public class AutonDepot extends LinearOpMode implements RunningOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.StartPosition.DEPOT, this);
-        auton = new Runnable() {
+
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 autonProcedures.start();
             }
-        };
-
-        Thread thread = new Thread(auton);
+        });
 
         waitForStart();
-
-        while (!opModeIsActive() && !isStopRequested()) {
-            telemetry.addData("Status", "Waiting in init");
-            telemetry.update();
-        }
 
         telemetry.clearAll();
 
@@ -65,5 +59,13 @@ public class AutonDepot extends LinearOpMode implements RunningOpMode {
     public void displayTelemetry(String msg) {
         telemetry.addData("Auton Depot", msg);
         telemetry.update();
+    }
+
+    @Override
+    public void waitForStart() {
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Status", "Waiting in init");
+            telemetry.update();
+        }
     }
 }
