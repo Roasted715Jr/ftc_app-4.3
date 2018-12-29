@@ -28,12 +28,11 @@ class AutonProcedures<T extends RunningOpMode> {
     private static final int LEFT_POSITION = 3;
     private static final int DEAD_CENTER = 4;
 
-    private static final int[] MIN_BLUE = {15, 30, 40};
-    private static final int[] MAX_BLUE = {35, 50, 55};
-    private static final int[] MIN_RED = {80, 30, 30};
-    private static final int[] MAX_RED = {90, 50, 45};
-
-
+//    private static final int[] MIN_BLUE = {15, 30, 40};
+//    private static final int[] MAX_BLUE = {35, 50, 55};
+//    private static final int[] MIN_RED = {80, 30, 30};
+//    private static final int[] MAX_RED = {90, 50, 45};
+    
     private static final int IMG_CUTOFF_Y = 300; //115
     private static final int IMG_FIRST_SECTION_X = 110;
     private static final int IMG_THIRD_SECTION_X = 290;
@@ -80,17 +79,14 @@ class AutonProcedures<T extends RunningOpMode> {
     }
 
     void start() {
-//        displayTelemetry("Deploying");
-//        deploy();
-//        displayTelemetry("Going to block");
-//        goToBlock();
-//        displayTelemetry("Going to depot");
-//        goToDepot();
-
-        dropIdol();
-
-//        displayTelemetry("Parking");
-//        park();
+        displayTelemetry("Deploying");
+        deploy();
+        displayTelemetry("Going to block");
+        goToBlock();
+        displayTelemetry("Going to depot");
+        goToDepot();
+        displayTelemetry("Parking");
+        park();
         displayTelemetry("Done");
     }
 
