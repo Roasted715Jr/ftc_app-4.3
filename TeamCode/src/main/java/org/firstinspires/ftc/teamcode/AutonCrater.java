@@ -10,7 +10,6 @@ public class AutonCrater extends LinearOpMode implements RunningOpMode {
     private AutonProcedures<AutonCrater> autonProcedures = new AutonProcedures<>();
     private Hardware robot = new Hardware();
     private ElapsedTime elapsedTime = new ElapsedTime();
-    private Runnable auton;
 
     @Override
     public void runOpMode() throws InterruptedException {

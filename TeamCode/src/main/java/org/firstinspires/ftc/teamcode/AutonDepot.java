@@ -10,7 +10,6 @@ public class AutonDepot extends LinearOpMode implements RunningOpMode {
     private AutonProcedures<AutonDepot> autonProcedures = new AutonProcedures<>();
     private Hardware robot = new Hardware();
     private ElapsedTime elapsedTime = new ElapsedTime();
-    private Runnable auton;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,7 +31,7 @@ public class AutonDepot extends LinearOpMode implements RunningOpMode {
         while (opModeIsActive()) {
             if (isStopRequested()) {
                 robot.stop();
-                robot.setMotorPowers(0);
+                thread.stop();
             }
 
             idle();

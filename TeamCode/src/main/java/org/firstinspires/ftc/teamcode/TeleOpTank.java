@@ -30,8 +30,8 @@ public class TeleOpTank extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 telemetry.addData("Status", "Lifting robot");
                 telemetry.update();
-                robot.liftToPos(7000);
-                robot.liftToPos(100);
+                robot.liftExtendPartial();
+                robot.liftRetract();
             }
 
             //Run this 25 times/second
