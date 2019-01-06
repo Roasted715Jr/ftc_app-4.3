@@ -92,15 +92,7 @@ class AutonProcedures<T extends RunningOpMode> {
 
     private void deploy() {
         robot.liftExtendFull();
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                robot.liftRetract();
-            }
-        });
-
-        thread.run();
+        //We have the retract code after we start moving to make sure we don't start retracting before we move (it is in the goToBlock function now)
     }
 
     private void goToBlock() {
@@ -119,6 +111,12 @@ class AutonProcedures<T extends RunningOpMode> {
         }
 
         robot.turnDegrees(degToTurn, TURN_SPEED);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                robot.liftRetract();
+            }
+        }).start();
         robot.goDistance(blockDist, 1);
     }
 

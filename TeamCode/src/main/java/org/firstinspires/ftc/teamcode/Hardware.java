@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -41,6 +42,8 @@ public class Hardware {
     DcMotor leftMotor;
     DcMotor liftMotor;
     private Servo servo;
+    private Thread lifterBtnListener;
+    private TouchSensor lifterBtn;
 
     private WebcamName webcamName;
 
@@ -76,6 +79,7 @@ public class Hardware {
 
                 colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
                 servo = hardwareMap.get(Servo.class, "servo");
+                lifterBtn = hardwareMap.get(TouchSensor.class, "lifterBtn");
 
                 //Parameters will already be defined in the scope... the scope spans between all the cases, but you can't do anything outside a case :/
                 parameters = new BNO055IMU.Parameters();
@@ -106,6 +110,16 @@ public class Hardware {
         setMotorPowers(0, 0);
 
         setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        lifterBtnListener = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (lifterBtn.isPressed())
+                    liftReset();
+            }
+        });
+
+        lifterBtnListener.start();
     }
 
     void initCamera() {
@@ -184,7 +198,7 @@ public class Hardware {
 
     void liftReset() {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Lift some more to ensure the button is no longer pressed?
     }
 
     void liftRetract() {
@@ -195,6 +209,8 @@ public class Hardware {
         //The value is negative for some odd reason
         //7000 to bottom of hook
         //8500 to top of hook
+
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         liftMotor.setTargetPosition(-counts);
         setLiftPower(1);
@@ -208,7 +224,7 @@ public class Hardware {
         servo.setPosition(pos);
     }
 
-    void setLiftPower(double liftSpeed) {
+    private void setLiftPower(double liftSpeed) {
         liftMotor.setPower(liftSpeed);
     }
 
@@ -222,7 +238,7 @@ public class Hardware {
         leftMotor.setPower(leftSpeed);
     }
 
-    void setMotorRunModes(DcMotor.RunMode runMode) {
+    private void setMotorRunModes(DcMotor.RunMode runMode) {
         //RUN_WITHOUT_ENCODER: Set power straight to motor, but still track encoders
         //RUN_USING_ENCODER: Makes sure motors are running at the right speed
         //RUN_TO_POSITION: Motor will go to and hold position that is set
@@ -232,7 +248,7 @@ public class Hardware {
         leftMotor.setMode(runMode);
     }
 
-    void setMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+    private void setMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         rightMotor.setZeroPowerBehavior(zeroPowerBehavior);
         leftMotor.setZeroPowerBehavior(zeroPowerBehavior);
     }
@@ -248,6 +264,7 @@ public class Hardware {
     void stop() {
         setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         setMotorPowers(0);
+        lifterBtnListener.stop();
     }
 
     void turnDegrees(double degreesToTurn, double speed) {
