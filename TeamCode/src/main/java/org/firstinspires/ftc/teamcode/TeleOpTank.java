@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "Tank", group = "CompBot")
 public class TeleOpTank extends LinearOpMode {
@@ -33,6 +34,15 @@ public class TeleOpTank extends LinearOpMode {
                 robot.liftExtendPartial();
                 robot.liftRetract();
             }
+
+            if (gamepad2.a) {
+                robot.setLiftRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.setLiftPower(-0.5);
+            } else
+                robot.setLiftPower(0);
+
+            if (gamepad2.left_bumper)
+                robot.liftReset();
 
             //Run this 25 times/second
             sleep(40);

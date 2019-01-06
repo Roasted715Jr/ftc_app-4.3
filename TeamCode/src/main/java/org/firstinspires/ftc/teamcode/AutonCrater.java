@@ -30,8 +30,8 @@ public class AutonCrater extends LinearOpMode implements RunningOpMode {
 
         while (opModeIsActive()) {
             if (isStopRequested()) {
-                robot.stop();
                 thread.stop();
+                robot.stop();
             }
 
             idle();

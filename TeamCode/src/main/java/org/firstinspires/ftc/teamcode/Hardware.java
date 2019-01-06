@@ -79,7 +79,7 @@ public class Hardware {
 
                 colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
                 servo = hardwareMap.get(Servo.class, "servo");
-                lifterBtn = hardwareMap.get(TouchSensor.class, "lifterBtn");
+//                lifterBtn = hardwareMap.get(TouchSensor.class, "lifterBtn");
 
                 //Parameters will already be defined in the scope... the scope spans between all the cases, but you can't do anything outside a case :/
                 parameters = new BNO055IMU.Parameters();
@@ -111,15 +111,15 @@ public class Hardware {
 
         setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        lifterBtnListener = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (lifterBtn.isPressed())
-                    liftReset();
-            }
-        });
+//        lifterBtnListener = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (lifterBtn.isPressed())
+//                    liftReset();
+//            }
+//        });
 
-        lifterBtnListener.start();
+//        lifterBtnListener.start();
     }
 
     void initCamera() {
@@ -210,7 +210,7 @@ public class Hardware {
         //7000 to bottom of hook
         //8500 to top of hook
 
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setLiftRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         liftMotor.setTargetPosition(-counts);
         setLiftPower(1);
@@ -224,8 +224,8 @@ public class Hardware {
         servo.setPosition(pos);
     }
 
-    private void setLiftPower(double liftSpeed) {
-        liftMotor.setPower(liftSpeed);
+    void setLiftPower(double liftSpeed) {
+        liftMotor.setPower(-liftSpeed);
     }
 
     void setMotorPowers(double motorSpeeds) {
@@ -246,6 +246,10 @@ public class Hardware {
 
         rightMotor.setMode(runMode);
         leftMotor.setMode(runMode);
+    }
+
+    void setLiftRunMode(DcMotor.RunMode runMode) {
+        liftMotor.setMode(runMode);
     }
 
     private void setMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {

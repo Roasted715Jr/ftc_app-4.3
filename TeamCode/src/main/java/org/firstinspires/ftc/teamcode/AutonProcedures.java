@@ -110,6 +110,7 @@ class AutonProcedures<T extends RunningOpMode> {
             blockDist = 30;
         }
 
+        robot.goDistance(1, 1);
         robot.turnDegrees(degToTurn, TURN_SPEED);
         new Thread(new Runnable() {
             @Override
@@ -303,7 +304,7 @@ class AutonProcedures<T extends RunningOpMode> {
             robot.goDistance(-blockDist + 5, 1);
             robot.turnToDegree(45, TURN_SPEED);
             robot.goDistance(36, 1);
-            robot.turnDegrees(45, TURN_SPEED);
+            robot.turnDegrees(50, TURN_SPEED);
         } else
             robot.turnDegrees(degToTurn * -2, TURN_SPEED);
 
