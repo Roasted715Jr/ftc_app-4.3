@@ -34,14 +34,6 @@ public class TeleOpTank extends LinearOpMode {
                 robot.liftRetract();
             }
 
-            if (gamepad2.left_bumper) {
-                telemetry.addData("Status", "Moving lifter down");
-                telemetry.update();
-                while (gamepad2.left_bumper)
-                    robot.setLiftPower(-1);
-                robot.liftReset();
-            }
-
             //Run this 25 times/second
             sleep(40);
         }
