@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -22,18 +23,22 @@ public class Hardware {
     private static final int NEVEREST_40_COUNTS_PER_REVOLUTION = 1120;
 //    private static final int NEVEREST_20_COUNTS_PER_REVOLUTION = 537; //Is actually 537.6, but setting the motors requires an int so it will truncate to 537 anyways
 
-    private static final RobotType robotType = RobotType.COMP_BOT;
+    private static final int COMP_BOT = 0;
+    private static final int MATT_TINY_BOT = 1;
+    private static final int TINY_BOT = 2;
+    private static final int robotType = COMP_BOT;
+
 
     static final String VUFORIA_LICENSE_KEY = "Abq1tHr/////AAABmYC8ioniS0f2gyQRx7fZlTWMwyYcrV/bnslJvcDe0AhxA/GAkYTIdNbPWjYtplipzvASUZRGR+AoGDI1dKyuCFCc4qy1eVbx8NO4nuAKzeGoncY7acvfol19suW5Zl29E+APEV0CG4GVBe4R+bZ/Xyd2E7CZ7AcrLbWM8+SJiMCDnxJa3J0ozBHMPMs6GNFyYS6YCVNMkFcLEKxDicwXqpuJddG5XenbAs8ot9UT11WRYZjpprLkSRtM1/OyigcUeb0wk2PL6lFVBMHMZbWK5HkJEmBoN5+v2fP6zouj0GPGyEh/eV8Xe71LhBz0WXKd180hUCowZVBfdsTtuYwFiBkAyRLtiQQb4/b80sAx1b6s";
 
     private static int PINION_TEETH;
     private static int SPUR_TEETH;
 
-    enum RobotType {
-        MATT_TINY_BOT,
-        COMP_BOT,
-        TINY_BOT
-    }
+//    enum RobotType {
+//        MATT_TINY_BOT,
+//        COMP_BOT,
+//        TINY_BOT
+//    }
 
     private BNO055IMU imu;
     private ColorSensor colorSensor;
@@ -173,9 +178,9 @@ public class Hardware {
         //  Motor: 7 counts/revolution
         //  Output: 1120 counts/revolution
 
-        if (robotType == RobotType.MATT_TINY_BOT || robotType == RobotType.TINY_BOT)
+        if (robotType == MATT_TINY_BOT || robotType == TINY_BOT)
                 goEncoderCounts((int) (revolutions * REV_CORE_HEX_COUNTS_PER_REVOLUTION), speed);
-        else if (robotType == RobotType.COMP_BOT)
+        else if (robotType == COMP_BOT)
                 goEncoderCounts((int) (revolutions * NEVEREST_40_COUNTS_PER_REVOLUTION), speed);
 
         setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -188,12 +193,14 @@ public class Hardware {
         while ((rightMotor.isBusy() || leftMotor.isBusy())) {}
     }
 
-    void liftExtendFull() {
-        liftToPos(8500);
+    void liftExtendFull(ElapsedTime elapsedTime) {
+        elapsedTime.reset();
+//        liftToPos(8500, elapsedTime);
+        liftToPos(8300);
     }
 
     void liftExtendPartial() {
-        liftToPos(7000);
+        liftToPos(7500);
     }
 
     void liftReset() {
@@ -216,6 +223,16 @@ public class Hardware {
         setLiftPower(1);
 
         while (liftMotor.isBusy()) {}
+
+        setLiftPower(0);
+    }
+
+    void liftToPos(int counts, ElapsedTime elapsedTime) {
+        setLiftRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setTargetPosition(-counts);
+        setLiftPower(1);
+
+        while (liftMotor.isBusy() && elapsedTime.seconds() < 3) {}
 
         setLiftPower(0);
     }
@@ -286,6 +303,25 @@ public class Hardware {
         } else { //Turn left
             while (getYaw() < target)
                 setMotorPowers(speed, -speed);
+            setMotorPowers(0);
+        }
+    }
+
+    void turnDegrees(double degreesToTurn, double leftPower, double rightPower) {
+        double startYaw = getYaw();
+        double target = startYaw + degreesToTurn;
+
+//        Log.i(TAG, "Target: " + target);
+//        Log.i(TAG, "Start Yaw: " + startYaw);
+//        Log.i(TAG, "Degreees to Turn: " + degreesToTurn);
+
+        if (degreesToTurn < 0) { //Turn right
+            while (getYaw() > target)
+                setMotorPowers(rightPower, leftPower);
+            setMotorPowers(0);
+        } else { //Turn left
+            while (getYaw() < target)
+                setMotorPowers(rightPower, leftPower);
             setMotorPowers(0);
         }
     }

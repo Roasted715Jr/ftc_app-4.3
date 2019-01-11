@@ -14,6 +14,7 @@ public class TeleOpTank extends LinearOpMode {
         double leftValue;
 
         robot.init(hardwareMap);
+        robot.setLiftRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -29,20 +30,16 @@ public class TeleOpTank extends LinearOpMode {
             telemetry.update();
 
             if (gamepad2.right_bumper) {
-                telemetry.addData("Status", "Lifting robot");
-                telemetry.update();
-                robot.liftExtendPartial();
-                robot.liftRetract();
-            }
-
-            if (gamepad2.a) {
-                robot.setLiftRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.setLiftPower(-0.5);
+//                telemetry.addData("Status", "Lifting robot");
+//                telemetry.update();
+                robot.setLiftPower(0.75);
+//                robot.setMotorPowers(0);
+//                robot.liftExtendPartial();
+//                robot.liftRetract();
+            } else if (gamepad2.left_bumper) {
+                robot.setLiftPower(-0.75);
             } else
                 robot.setLiftPower(0);
-
-            if (gamepad2.left_bumper)
-                robot.liftReset();
 
             //Run this 25 times/second
             sleep(40);

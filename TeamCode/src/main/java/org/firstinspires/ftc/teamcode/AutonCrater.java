@@ -13,7 +13,7 @@ public class AutonCrater extends LinearOpMode implements RunningOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.StartPosition.CRATER, this);
+        autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.CRATER_START, this);
 
         Thread thread = new Thread(new Runnable() {
             @Override

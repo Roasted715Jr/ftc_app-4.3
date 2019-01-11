@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ThreadPool;
@@ -38,24 +37,27 @@ class AutonProcedures<T extends RunningOpMode> {
     private static final int IMG_THIRD_SECTION_X = 290;
     private static final double FIND_BLOCK_SPEED = 0.2;
 
+    static final int CRATER_START = 0;
+    static final int DEPOT_START = 0;
+
 //    private static final int ANGLE_TOLERANCE = 40;
     private static final double TURN_SPEED = 0.25;
 
 //    private double startYaw, endYaw;
     private ElapsedTime elapsedTime;
-    enum StartPosition {
-        CRATER,
-        DEPOT
-    }
+//    enum StartPosition {
+//        CRATER,
+//        DEPOT
+//    }
     private GoldVision goldVision;
     private Hardware robot;
     private HardwareMap hardwareMap;
-    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND, degToTurn = 22, blockDist;
-    private StartPosition startPosition;
+    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND, degToTurn = 22, blockDist, startPosition;
+//    private StartPosition startPosition;
     private T runningOpMode;
     private VuforiaLocalizer vuforia;
 
-    void init(ElapsedTime elapsedTime, Hardware robot, HardwareMap hardwareMap, StartPosition startPosition, T runningOpMode) {
+    void init(ElapsedTime elapsedTime, Hardware robot, HardwareMap hardwareMap, int startPosition, T runningOpMode) {
         this.elapsedTime = elapsedTime;
         this.robot = robot;
         this.hardwareMap = hardwareMap;
@@ -91,7 +93,8 @@ class AutonProcedures<T extends RunningOpMode> {
     }
 
     private void deploy() {
-        robot.liftExtendFull();
+        robot.liftReset();
+        robot.liftExtendFull(elapsedTime);
         //We have the retract code after we start moving to make sure we don't start retracting before we move (it is in the goToBlock function now)
     }
 
@@ -105,19 +108,30 @@ class AutonProcedures<T extends RunningOpMode> {
         } else if (blockPos == LEFT_POSITION) {
             degToTurn = 20;
             blockDist = 32;
-        } else if (blockPos == DEAD_CENTER || blockPos == CENTER_POSITION) {
-            degToTurn = 0;
+        } else if (blockPos == CENTER_POSITION) {
             blockDist = 30;
         }
 
-        robot.goDistance(1, 1);
-        robot.turnDegrees(degToTurn, TURN_SPEED);
+        displayTelemetry("blockPos: " + blockPos);
+
+        robot.goDistance(3, 1);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 robot.liftRetract();
             }
         }).start();
+        if (blockPos != CENTER_POSITION)
+//            robot.turnDegrees(degToTurn, TURN_SPEED);
+            displayTelemetry("If we see this, it is not a good sign");
+        else {
+            displayTelemetry("Good job");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         robot.goDistance(blockDist, 1);
     }
 
@@ -126,7 +140,7 @@ class AutonProcedures<T extends RunningOpMode> {
 
         lCounter = 0;
         cCounter = 0;
-        dcCounter = 0;
+//        dcCounter = 0;
         rCounter = 0;
 
         elapsedTime.reset();
@@ -156,8 +170,8 @@ class AutonProcedures<T extends RunningOpMode> {
                         if (boundingRectY <= IMG_CUTOFF_Y) {
                             if (boundingRectX < IMG_FIRST_SECTION_X - 10)
                                 rCounter++; //These are reversed now that the camera will be upside down
-                            else if (boundingRectX > IMG_FIRST_SECTION_X + 75 && boundingRectX < IMG_THIRD_SECTION_X - 75)
-                                dcCounter++;
+//                            else if (boundingRectX > IMG_FIRST_SECTION_X + 75 && boundingRectX < IMG_THIRD_SECTION_X - 75)
+//                                dcCounter++;
                             else if (boundingRectX > IMG_FIRST_SECTION_X + 10 && boundingRectX < IMG_THIRD_SECTION_X - 10)
                                 cCounter++;
                             else if (boundingRectX > IMG_THIRD_SECTION_X + 10)
@@ -176,8 +190,8 @@ class AutonProcedures<T extends RunningOpMode> {
                 blockPos = LEFT_POSITION;
         else if (lCounter > cCounter)
             blockPos = LEFT_POSITION;
-        else if (dcCounter > cCounter)
-            blockPos = DEAD_CENTER;
+//        else if (dcCounter > cCounter)
+//            blockPos = DEAD_CENTER;
         else if (cCounter > 0)
             blockPos = CENTER_POSITION;
 
@@ -187,128 +201,21 @@ class AutonProcedures<T extends RunningOpMode> {
         return blockPos;
     }
 
-//    private int getBlockPos(int mSec) {
-//        blockPosRel = BLOCK_NOT_FOUND;
-//
-////        lCounter = 0;
-////        cCounter = 0;
-////        dcCounter = 0;
-////        rCounter = 0;
-//
-//        elapsedTime.reset();
-//
-//        while (elapsedTime.milliseconds() <= mSec)
-//            vuforia.getFrameOnce(Continuation.create(ThreadPool.getDefault(), new Consumer<Frame>() {
-//                @Override
-//                public void accept(Frame frame) {
-//                    Bitmap bitmap = vuforia.convertFrameToBitmap(frame);
-//                    Mat img = new Mat();
-//                    if (bitmap != null) {
-//                        Utils.bitmapToMat(bitmap, img);
-//                    }
-//
-//                    goldVision.processFrame(img, null);
-//
-//                    List<MatOfPoint> contours = goldVision.getContours();
-//
-//                    for (int i = 0; i < contours.size(); i++) {
-//                        // get the bounding rectangle of a single contour, we use it to get the x/y center
-//                        // yes there's a mass center using Imgproc.moments but w/e
-//                        Rect boundingRect = Imgproc.boundingRect(contours.get(i));
-//
-//                        double boundingRectX = (boundingRect.x + boundingRect.width) / 2;
-//                        double boundingRectY = (boundingRect.y + boundingRect.height) / 2;
-//
-//                        if (boundingRectY <= IMG_CUTOFF_Y) {
-//                            if (boundingRectX < IMG_FIRST_SECTION_X - 10) {
-////                                rCounter++; //These are reversed now that the camera will be upside down
-//                                blockPosRel = RIGHT_POSITION;
-//                                break;
-//                            } else if (boundingRectX > IMG_FIRST_SECTION_X + 75 && boundingRectX < IMG_THIRD_SECTION_X - 75) {
-////                                dcCounter++;
-//                                blockPosRel = DEAD_CENTER;
-//                                break;
-//                            } else if (boundingRectX > IMG_FIRST_SECTION_X + 10 && boundingRectX < IMG_THIRD_SECTION_X - 10) {
-////                                cCounter++;
-//                                blockPosRel = CENTER_POSITION;
-//                                break;
-//                            } else if (boundingRectX > IMG_THIRD_SECTION_X + 10) {
-////                                lCounter++;
-//                                blockPosRel = LEFT_POSITION;
-//                                break;
-//                            }
-//
-////                            telemetry.addData("Coordinates", "(" + boundingRectX + ", " + boundingRectY + ")");
-//                        }
-//                    }
-//                }
-//            }));
-//
-////        if (rCounter > cCounter)
-////            if (rCounter > lCounter)
-////                blockPosRel = RIGHT_POSITION;
-////            else
-////                blockPosRel = LEFT_POSITION;
-////        else if (lCounter > cCounter)
-////            blockPosRel = LEFT_POSITION;
-////        else if (dcCounter > cCounter)
-////            blockPosRel = DEAD_CENTER;
-////        else if (cCounter > 0)
-////            blockPosRel = CENTER_POSITION;
-//
-////        telemetry.addData("blockPos1", blockPos);
-////        telemetry.update();
-//
-//        return blockPosRel;
-//    }
-
-//    private void turnToBlock() {
-//        if (blockPos != BLOCK_NOT_FOUND) {
-//            startYaw = robot.getYaw();
-//
-//            turn:
-//            while (getBlockPos(150) != DEAD_CENTER) {
-//                //Move motors then stop them after a short amount of time
-//                switch (blockPos) {
-//                    case RIGHT_POSITION:
-//                        if (robot.getYaw() - startYaw < -ANGLE_TOLERANCE)
-//                            while (robot.getYaw() < -ANGLE_TOLERANCE / 2)
-//                                robot.setMotorPowers(1, -1);
-//                        else
-//                            robot.setMotorPowers(-FIND_BLOCK_SPEED, FIND_BLOCK_SPEED);
-//                        break;
-//                    case LEFT_POSITION:
-//                        if (robot.getYaw() - startYaw > ANGLE_TOLERANCE)
-//                            while (robot.getYaw() > ANGLE_TOLERANCE / 2)
-//                                robot.setMotorPowers(-1, 1);
-//                        robot.setMotorPowers(FIND_BLOCK_SPEED, -FIND_BLOCK_SPEED);
-//                        break;
-//                    default:
-//                        break turn;
-//                }
-//                try {
-//                    Thread.sleep(175);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                robot.setMotorPowers(0, 0);
-//            }
-//        }
-//
-//        endYaw = robot.getYaw();
-//    }
-
     private void goToDepot() {
-        if (startPosition == StartPosition.CRATER) {
+        if (startPosition == CRATER_START) {
             //Move away from the block
-            robot.goDistance(-blockDist + 5, 1);
-            robot.turnToDegree(45, TURN_SPEED);
+//            robot.goDistance(-blockDist + 5, 1);
+            robot.goDistance(-blockDist + 20, 1);
+//            robot.turnToDegree(45, TURN_SPEED);
+            robot.turnToDegree(90, TURN_SPEED);
             robot.goDistance(36, 1);
-            robot.turnDegrees(50, TURN_SPEED);
+//            robot.turnDegrees(55, TURN_SPEED);
+//            robot.turnDegrees(10, TURN_SPEED, TURN_SPEED * 2);
         } else
-            robot.turnDegrees(degToTurn * -2, TURN_SPEED);
+            if (blockPos != CENTER_POSITION)
+                robot.turnDegrees(degToTurn * -2, TURN_SPEED);
 
-        robot.goDistance(9, 1);
+//        robot.goDistance(9, 1);
         dropIdol();
     }
 
@@ -336,7 +243,7 @@ class AutonProcedures<T extends RunningOpMode> {
                 break;
         }
 
-        if (startPosition == StartPosition.DEPOT)
+        if (startPosition == DEPOT_START)
             robot.goDistance(12, 0.5);
 
         robot.setMotorPowers(0);
@@ -365,7 +272,7 @@ class AutonProcedures<T extends RunningOpMode> {
 //    }
 
     private void park() {
-        if (startPosition == StartPosition.CRATER)
+        if (startPosition == CRATER_START)
             robot.goDistance(-77, 1);
         else {
             robot.turnToDegree(-60, TURN_SPEED);

@@ -13,7 +13,7 @@ public class AutonDepot extends LinearOpMode implements RunningOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.StartPosition.DEPOT, this);
+        autonProcedures.init(elapsedTime, robot, hardwareMap, AutonProcedures.DEPOT_START, this);
 
         Thread thread = new Thread(new Runnable() {
             @Override
