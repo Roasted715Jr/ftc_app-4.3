@@ -12,6 +12,8 @@ public class TeleOpTank extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         double rightValue;
         double leftValue;
+        double speedMultiplier = 1;
+        boolean multiplierToggle = false;
 
         robot.init(hardwareMap);
         robot.setLiftRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -19,15 +21,17 @@ public class TeleOpTank extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            rightValue = -gamepad1.right_stick_y;
-            leftValue = -gamepad1.left_stick_y;
+            rightValue = -gamepad1.right_stick_y * speedMultiplier;
+            leftValue = -gamepad1.left_stick_y * speedMultiplier;
 
             robot.setMotorPowers(rightValue, leftValue);
 
-            telemetry.addData("leftValue", "%.2f", leftValue);
-            telemetry.addData("rightValue", "%.2f", rightValue);
-
             telemetry.update();
+
+            if (gamepad1.a) {
+                multiplierToggle = !multiplierToggle;
+                speedMultiplier = multiplierToggle ? 0.5 : 1;
+            }
 
             if (gamepad2.right_bumper) {
 //                telemetry.addData("Status", "Lifting robot");
@@ -41,8 +45,12 @@ public class TeleOpTank extends LinearOpMode {
             } else
                 robot.setLiftPower(0);
 
+            telemetry.addData("leftValue", "%.2f", leftValue);
+            telemetry.addData("rightValue", "%.2f", rightValue);
+            telemetry.addData("speedMultiplier", speedMultiplier);
+
             //Run this 25 times/second
-            sleep(40);
+//            sleep(40);
         }
     }
 }

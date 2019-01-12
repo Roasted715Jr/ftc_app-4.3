@@ -191,12 +191,14 @@ public class Hardware {
         setMotorPowers(speed);
 
         while ((rightMotor.isBusy() || leftMotor.isBusy())) {}
+
+        setMotorPowers(0);
     }
 
     void liftExtendFull(ElapsedTime elapsedTime) {
         elapsedTime.reset();
 //        liftToPos(8500, elapsedTime);
-        liftToPos(8300);
+        liftToPos(8500); //8300
     }
 
     void liftExtendPartial() {

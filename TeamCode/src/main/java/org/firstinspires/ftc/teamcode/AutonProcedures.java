@@ -25,7 +25,7 @@ class AutonProcedures<T extends RunningOpMode> {
     private static final int RIGHT_POSITION = 1;
     private static final int CENTER_POSITION = 2;
     private static final int LEFT_POSITION = 3;
-    private static final int DEAD_CENTER = 4;
+//    private static final int DEAD_CENTER = 4;
 
 //    private static final int[] MIN_BLUE = {15, 30, 40};
 //    private static final int[] MAX_BLUE = {35, 50, 55};
@@ -38,7 +38,7 @@ class AutonProcedures<T extends RunningOpMode> {
     private static final double FIND_BLOCK_SPEED = 0.2;
 
     static final int CRATER_START = 0;
-    static final int DEPOT_START = 0;
+    static final int DEPOT_START = 1;
 
 //    private static final int ANGLE_TOLERANCE = 40;
     private static final double TURN_SPEED = 0.25;
@@ -100,7 +100,8 @@ class AutonProcedures<T extends RunningOpMode> {
 
     private void goToBlock() {
         blockPos = getBlockPos(1000);
-//        blockPos = CENTER_POSITION;
+
+        displayTelemetry("blockPos: " + blockPos);
 
         if (blockPos == RIGHT_POSITION) {
             degToTurn = -20;
@@ -112,8 +113,6 @@ class AutonProcedures<T extends RunningOpMode> {
             blockDist = 30;
         }
 
-        displayTelemetry("blockPos: " + blockPos);
-
         robot.goDistance(3, 1);
         new Thread(new Runnable() {
             @Override
@@ -122,16 +121,7 @@ class AutonProcedures<T extends RunningOpMode> {
             }
         }).start();
         if (blockPos != CENTER_POSITION)
-//            robot.turnDegrees(degToTurn, TURN_SPEED);
-            displayTelemetry("If we see this, it is not a good sign");
-        else {
-            displayTelemetry("Good job");
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+            robot.turnDegrees(degToTurn, TURN_SPEED);
         robot.goDistance(blockDist, 1);
     }
 
@@ -208,8 +198,9 @@ class AutonProcedures<T extends RunningOpMode> {
             robot.goDistance(-blockDist + 20, 1);
 //            robot.turnToDegree(45, TURN_SPEED);
             robot.turnToDegree(90, TURN_SPEED);
-            robot.goDistance(36, 1);
+            robot.goDistance(40, 1);
 //            robot.turnDegrees(55, TURN_SPEED);
+            robot.turnDegrees(15, TURN_SPEED);
 //            robot.turnDegrees(10, TURN_SPEED, TURN_SPEED * 2);
         } else
             if (blockPos != CENTER_POSITION)
@@ -217,6 +208,9 @@ class AutonProcedures<T extends RunningOpMode> {
 
 //        robot.goDistance(9, 1);
         dropIdol();
+
+        if (startPosition == CRATER_START)
+            robot.turnToDegree(135, TURN_SPEED);
     }
 
     private void dropIdol() {
