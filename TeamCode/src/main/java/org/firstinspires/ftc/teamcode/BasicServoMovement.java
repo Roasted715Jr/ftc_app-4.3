@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Servo", group = "CompBot")
 @Disabled
-public class BasicServoMovement extends LinearOpMode {
-    private Hardware robot = new Hardware();
+public class BasicServoMovement extends GenericOpMode {
+    private Hardware<BasicServoMovement> robot = new Hardware<>(this);
 
     @Override
     public void runOpMode() throws InterruptedException {

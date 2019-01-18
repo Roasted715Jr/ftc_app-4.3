@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "Encoder Tutorial", group = "CompBot")
 @Disabled
-public class BasicMoveDistance extends LinearOpMode {
-    private Hardware robot = new Hardware();
+public class BasicMoveDistance extends GenericOpMode {
+    private Hardware<BasicMoveDistance> robot = new Hardware<>(this);
 
     @Override
     public void runOpMode() throws InterruptedException {

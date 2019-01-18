@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-public class Hardware {
+public class Hardware<T extends GenericOpMode> {
     private static final double INCH_PER_MM = 0.03937007874;
     private static final double WHEEL_DIAMETER_INCH = 100.965 * INCH_PER_MM;
     private static final double WHEEL_CIRCUMFERENCE_INCH = WHEEL_DIAMETER_INCH * Math.PI;
@@ -47,10 +47,15 @@ public class Hardware {
     DcMotor leftMotor;
     DcMotor liftMotor;
     private Servo servo;
+    T runningOpMode;
     private Thread lifterBtnListener;
     private TouchSensor lifterBtn;
 
     private WebcamName webcamName;
+
+    Hardware (T runningOpMode) {
+        this.runningOpMode = runningOpMode;
+    }
 
     void init(HardwareMap ahwMap) {
         hardwareMap = ahwMap;
@@ -224,7 +229,9 @@ public class Hardware {
         liftMotor.setTargetPosition(-counts);
         setLiftPower(1);
 
-        while (liftMotor.isBusy()) {}
+        while (liftMotor.isBusy()) {
+            runningOpMode.displayTelemetry("liftMotor Position: " + liftMotor.getCurrentPosition());
+        }
 
         setLiftPower(0);
     }

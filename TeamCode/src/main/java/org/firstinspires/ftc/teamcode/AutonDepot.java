@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.sun.tools.javac.jvm.Gen;
 
 @Autonomous(name = "Depot", group = "CompBot")
-public class AutonDepot extends LinearOpMode implements RunningOpMode {
+public class AutonDepot extends GenericOpMode {
 
     private AutonProcedures<AutonDepot> autonProcedures = new AutonProcedures<>();
-    private Hardware robot = new Hardware();
+    private Hardware<AutonDepot> robot = new Hardware<>(this);
     private ElapsedTime elapsedTime = new ElapsedTime();
 
     @Override

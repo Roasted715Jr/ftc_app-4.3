@@ -13,7 +13,7 @@ import java.util.Locale;
 
 @TeleOp(name = "Turn w/ Gyro", group = "CompBot")
 @Disabled
-public class BasicTurnGyro extends LinearOpMode {
+public class BasicTurnGyro extends GenericOpMode {
     private static final int TAPE_NOT_FOUND = 0;
     private static final int TAPE_COLOR_BLUE = 1;
     private static final int TAPE_COLOR_RED = 2;
@@ -22,7 +22,7 @@ public class BasicTurnGyro extends LinearOpMode {
     private static final int[] MIN_RED = {80, 30, 30};
     private static final int[] MAX_RED = {90, 50, 45};
 
-    private Hardware robot = new Hardware();
+    private Hardware<BasicTurnGyro> robot = new Hardware<>(this);
 
     @Override
     public void runOpMode() throws InterruptedException {

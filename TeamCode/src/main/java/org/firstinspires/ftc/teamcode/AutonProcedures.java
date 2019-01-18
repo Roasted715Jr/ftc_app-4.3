@@ -20,7 +20,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
-class AutonProcedures<T extends RunningOpMode> {
+class AutonProcedures<T extends GenericOpMode> {
     private static final int BLOCK_NOT_FOUND = 0;
     private static final int RIGHT_POSITION = 1;
     private static final int CENTER_POSITION = 2;
@@ -76,20 +76,16 @@ class AutonProcedures<T extends RunningOpMode> {
         vuforia.enableConvertFrameToBitmap();
     }
 
-    private void displayTelemetry(String msg) {
-        runningOpMode.displayTelemetry(msg);
-    }
-
     void start() {
-        displayTelemetry("Deploying");
+        runningOpMode.displayTelemetry("Deploying");
         deploy();
-        displayTelemetry("Going to block");
-        goToBlock();
-        displayTelemetry("Going to depot");
-        goToDepot();
-        displayTelemetry("Parking");
-        park();
-        displayTelemetry("Done");
+//        displayTelemetry("Going to block");
+//        goToBlock();
+//        displayTelemetry("Going to depot");
+//        goToDepot();
+//        displayTelemetry("Parking");
+//        park();
+//        displayTelemetry("Done");
     }
 
     private void deploy() {
@@ -101,7 +97,7 @@ class AutonProcedures<T extends RunningOpMode> {
     private void goToBlock() {
         blockPos = getBlockPos(1000);
 
-        displayTelemetry("blockPos: " + blockPos);
+        runningOpMode.displayTelemetry("blockPos: " + blockPos);
 
         if (blockPos == RIGHT_POSITION) {
             degToTurn = -20;

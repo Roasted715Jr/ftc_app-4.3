@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "Tank", group = "CompBot")
-public class TeleOpTank extends LinearOpMode {
-    private Hardware robot = new Hardware();
+public class TeleOpTank extends GenericOpMode {
+    private Hardware<TeleOpTank> robot = new Hardware<>(this);
 
     @Override
     public void runOpMode() throws InterruptedException {
+        boolean aPressed = false;
         double rightValue;
         double leftValue;
         double speedMultiplier = 1;
@@ -29,9 +30,13 @@ public class TeleOpTank extends LinearOpMode {
             telemetry.update();
 
             if (gamepad1.a) {
-                multiplierToggle = !multiplierToggle;
-                speedMultiplier = multiplierToggle ? 0.5 : 1;
-            }
+                if (!aPressed)
+                    multiplierToggle = !multiplierToggle;
+                aPressed = true;
+            } else
+                aPressed = false;
+
+            speedMultiplier = multiplierToggle ? 0.5 : 1;
 
             if (gamepad2.right_bumper) {
 //                telemetry.addData("Status", "Lifting robot");
@@ -48,6 +53,7 @@ public class TeleOpTank extends LinearOpMode {
             telemetry.addData("leftValue", "%.2f", leftValue);
             telemetry.addData("rightValue", "%.2f", rightValue);
             telemetry.addData("speedMultiplier", speedMultiplier);
+            telemetry.addData("liftMotor Position", robot.liftMotor.getCurrentPosition()); //-47 to -8700
 
             //Run this 25 times/second
 //            sleep(40);

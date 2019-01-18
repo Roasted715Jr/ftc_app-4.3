@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Single Joystick", group = "CompBot")
 @Disabled
-public class BasicSingleJoystick extends LinearOpMode {
+public class BasicSingleJoystick extends GenericOpMode {
     private static final int DEG_TOLERANCE = 5;
 
-    Hardware robot = new Hardware();
+    Hardware<BasicSingleJoystick> robot = new Hardware<>(this);
 
     @Override
     public void runOpMode() throws InterruptedException {

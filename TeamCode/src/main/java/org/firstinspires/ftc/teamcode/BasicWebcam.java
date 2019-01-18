@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ThreadPool;
+import com.sun.tools.javac.jvm.Gen;
 import com.vuforia.Frame;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -23,7 +24,7 @@ import java.util.List;
 
 @Autonomous(name = "Webcam Test", group = "CompBot")
 @Disabled
-public class BasicWebcam extends LinearOpMode {
+public class BasicWebcam extends GenericOpMode {
     private static final int BLOCK_NOT_FOUND = 0;
     private static final int RIGHT_POSITION = 1;
     private static final int CENTER_POSITION = 2;
@@ -38,7 +39,7 @@ public class BasicWebcam extends LinearOpMode {
 
     private double startYaw, endYaw;
     private GoldVision goldVision;
-    private Hardware robot = new Hardware();
+    private Hardware<BasicWebcam> robot = new Hardware<>(this);
     private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND;
     private VuforiaLocalizer vuforia;
 

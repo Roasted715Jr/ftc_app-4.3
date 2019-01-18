@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Crater", group = "CompBot")
-public class AutonCrater extends LinearOpMode implements RunningOpMode {
+public class AutonCrater extends GenericOpMode {
 
     private AutonProcedures<AutonCrater> autonProcedures = new AutonProcedures<>();
-    private Hardware robot = new Hardware();
+    private Hardware<AutonCrater> robot = new Hardware<>(this);
     private ElapsedTime elapsedTime = new ElapsedTime();
 
     @Override

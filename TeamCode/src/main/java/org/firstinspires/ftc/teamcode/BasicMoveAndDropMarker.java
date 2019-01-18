@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Drop Marker", group = "CompBot")
 @Disabled
-public class BasicMoveAndDropMarker extends LinearOpMode {
+public class BasicMoveAndDropMarker extends GenericOpMode {
     private static final int TAPE_NOT_FOUND = 0;
     private static final int TAPE_COLOR_BLUE = 1;
     private static final int TAPE_COLOR_RED = 2;
@@ -19,7 +19,7 @@ public class BasicMoveAndDropMarker extends LinearOpMode {
 //    private static final int[] MAX_RED = {90, 50, 45};
     private static final int[] MAX_RED = {1700, 50, 45};
 
-    private Hardware robot = new Hardware();
+    private Hardware<BasicMoveAndDropMarker> robot = new Hardware<>(this);
 
     @Override
     public void runOpMode() throws InterruptedException {
