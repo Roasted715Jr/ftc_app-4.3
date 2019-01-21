@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Drop Marker", group = "CompBot")
 @Disabled
@@ -33,9 +32,9 @@ public class BasicMoveAndDropMarker extends GenericOpMode {
         robot.setMotorPowers(1);
 
         while (opModeIsActive()) {
-            color[0] = robot.getColorSensor().red();
-            color[1] = robot.getColorSensor().green();
-            color[2] = robot.getColorSensor().blue();
+            color[0] = robot.leftSensor.red();
+            color[1] = robot.leftSensor.green();
+            color[2] = robot.leftSensor.blue();
 
             if (isBetween(color, MIN_BLUE, MAX_BLUE))
                 tapeColor = TAPE_COLOR_BLUE;

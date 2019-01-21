@@ -38,17 +38,4 @@ public class AutonDepot extends GenericOpMode {
             idle();
         }
     }
-
-    public void displayTelemetry(String msg) {
-        telemetry.addData("Auton Depot", msg);
-        telemetry.update();
-    }
-
-    @Override
-    public void waitForStart() {
-        while (!opModeIsActive() && !isStopRequested()) {
-            telemetry.addData("Status", "Waiting in init");
-            telemetry.update();
-        }
-    }
 }

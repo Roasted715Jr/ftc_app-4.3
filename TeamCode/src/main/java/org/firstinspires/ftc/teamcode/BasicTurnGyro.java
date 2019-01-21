@@ -1,15 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
-import java.util.Locale;
 
 @TeleOp(name = "Turn w/ Gyro", group = "CompBot")
 @Disabled
@@ -55,9 +47,9 @@ public class BasicTurnGyro extends GenericOpMode {
         robot.setMotorPowers(0.5);
 
         while (tapeColor == TAPE_NOT_FOUND) {
-            color[0] = robot.getColorSensor().red();
-            color[1] = robot.getColorSensor().green();
-            color[2] = robot.getColorSensor().blue();
+            color[0] = robot.leftSensor.red();
+            color[1] = robot.leftSensor.green();
+            color[2] = robot.leftSensor.blue();
 
             if (isBetween(color, MIN_BLUE, MAX_BLUE))
                 tapeColor = TAPE_COLOR_BLUE;

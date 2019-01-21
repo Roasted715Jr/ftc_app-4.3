@@ -109,6 +109,8 @@ class AutonProcedures<T extends GenericOpMode> {
             blockDist = 30;
         }
 
+        squareUp();
+
         robot.goDistance(3, 1);
         new Thread(new Runnable() {
             @Override
@@ -187,6 +189,10 @@ class AutonProcedures<T extends GenericOpMode> {
         return blockPos;
     }
 
+    private void squareUp() {
+
+    }
+
     private void goToDepot() {
         if (startPosition == CRATER_START) {
             //Move away from the block
@@ -210,28 +216,30 @@ class AutonProcedures<T extends GenericOpMode> {
     }
 
     private void dropIdol() {
-        int red;
-        int blue;
-        float[] hsvValues = new float[3];
-        float hue;
+//        int red;
+//        int blue;
+//        float[] hsvValues = new float[3];
+//        float hue;
 
-        robot.setMotorPowers(0.75);
+//        robot.setMotorPowers(0.75);
 
-        while (true) {
-            red = robot.getColorSensor().red();
-            blue = robot.getColorSensor().blue();
+//        while (true) {
+//            red = robot.leftSensor.red();
+//            blue = robot.leftSensor.blue();
+//
+//            Color.RGBToHSV(robot.leftSensor.red(),
+//                     robot.leftSensor.green(),
+//                    robot.leftSensor.blue(),
+//                    hsvValues);
+//            hue = hsvValues[0];
+//
+//            if (red > 1000 && (hue < 10 || hue > 350))
+//                break;
+//            else if (blue > 1000 && (hue < 230 && hue > 190))
+//                break;
+//        }
 
-            Color.RGBToHSV(robot.getColorSensor().red(),
-                     robot.getColorSensor().green(),
-                    robot.getColorSensor().blue(),
-                    hsvValues);
-            hue = hsvValues[0];
-
-            if (red > 1000 && (hue < 10 || hue > 350))
-                break;
-            else if (blue > 1000 && (hue < 230 && hue > 190))
-                break;
-        }
+        robot.waitForTape();
 
         if (startPosition == DEPOT_START)
             robot.goDistance(12, 0.5);

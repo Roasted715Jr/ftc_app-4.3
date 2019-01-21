@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -41,7 +43,7 @@ public class Hardware<T extends GenericOpMode> {
 //    }
 
     private BNO055IMU imu;
-    private ColorSensor colorSensor;
+    ColorSensor rightSensor, leftSensor;
     private HardwareMap hardwareMap;
     DcMotor rightMotor;
     DcMotor leftMotor;
@@ -87,7 +89,8 @@ public class Hardware<T extends GenericOpMode> {
                 liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
                 liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+                rightSensor = hardwareMap.get(ColorSensor.class, "rightSensor");
+                leftSensor = hardwareMap.get(ColorSensor.class, "leftSensor");
                 servo = hardwareMap.get(Servo.class, "servo");
 //                lifterBtn = hardwareMap.get(TouchSensor.class, "lifterBtn");
 
@@ -153,10 +156,6 @@ public class Hardware<T extends GenericOpMode> {
         return WHEEL_CIRCUMFERENCE_INCH;
     }
 
-    ColorSensor getColorSensor() {
-        return colorSensor;
-    }
-
     Servo getServo() {
         return servo;
     }
@@ -203,7 +202,7 @@ public class Hardware<T extends GenericOpMode> {
     void liftExtendFull(ElapsedTime elapsedTime) {
         elapsedTime.reset();
 //        liftToPos(8500, elapsedTime);
-        liftToPos(8500); //8300
+        liftToPos(8670); //8300, 8500
     }
 
     void liftExtendPartial() {
@@ -230,7 +229,7 @@ public class Hardware<T extends GenericOpMode> {
         setLiftPower(1);
 
         while (liftMotor.isBusy()) {
-            runningOpMode.displayTelemetry("liftMotor Position: " + liftMotor.getCurrentPosition());
+            runningOpMode.displayTelemetry("liftMotor Position: " + -(liftMotor.getCurrentPosition()) + ", aiming for " + counts);
         }
 
         setLiftPower(0);
@@ -346,6 +345,31 @@ public class Hardware<T extends GenericOpMode> {
             while (getYaw() < target)
                 setMotorPowers(speed, -speed);
             setMotorPowers(0);
+        }
+    }
+
+    void waitForTape() {
+        setMotorPowers(0.75);
+
+        int red;
+        int blue;
+        float[] hsvValues = new float[3];
+        float hue;
+
+        while (true) {
+            red = leftSensor.red();
+            blue = leftSensor.blue();
+
+            Color.RGBToHSV(leftSensor.red(),
+                    leftSensor.green(),
+                    leftSensor.blue(),
+                    hsvValues);
+            hue = hsvValues[0];
+
+            if (red > 1000 && (hue < 10 || hue > 350))
+                break;
+            else if (blue > 1000 && (hue < 230 && hue > 190))
+                break;
         }
     }
 }

@@ -37,17 +37,4 @@ public class AutonCrater extends GenericOpMode {
             idle();
         }
     }
-
-    public void displayTelemetry(String msg) {
-        telemetry.addData("Auton Crater", msg);
-        telemetry.update();
-    }
-
-    @Override
-    public void waitForStart() {
-        while (!opModeIsActive() && !isStopRequested()) {
-            telemetry.addData("Status", "Waiting in init");
-            telemetry.update();
-        }
-    }
 }
