@@ -202,7 +202,7 @@ public class Hardware<T extends GenericOpMode> {
     void liftExtendFull(ElapsedTime elapsedTime) {
         elapsedTime.reset();
 //        liftToPos(8500, elapsedTime);
-        liftToPos(8670); //8300, 8500
+        liftToPos(8650); //8300, 8500
     }
 
     void liftExtendPartial() {
@@ -351,25 +351,40 @@ public class Hardware<T extends GenericOpMode> {
     void waitForTape() {
         setMotorPowers(0.75);
 
-        int red;
-        int blue;
-        float[] hsvValues = new float[3];
-        float hue;
+        int redR, redL, blueR, blueL;
+        double rightValue = 1, leftValue = 1;
+        float[] hsvValuesR = new float[3], hsvValuesL = new float[3];
+        float hueR, hueL;
 
-        while (true) {
-            red = leftSensor.red();
-            blue = leftSensor.blue();
+        while (rightValue > 0 || leftValue > 0) {
+            redR = rightSensor.red();
+            blueR = rightSensor.blue();
+            redL = leftSensor.red();
+            blueL = leftSensor.blue();
 
+            Color.RGBToHSV(rightSensor.red(),
+                    rightSensor.green(),
+                    rightSensor.blue(),
+                    hsvValuesR);
             Color.RGBToHSV(leftSensor.red(),
                     leftSensor.green(),
                     leftSensor.blue(),
-                    hsvValues);
-            hue = hsvValues[0];
+                    hsvValuesL);
 
-            if (red > 1000 && (hue < 10 || hue > 350))
-                break;
-            else if (blue > 1000 && (hue < 230 && hue > 190))
-                break;
+            hueR = hsvValuesR[0];
+            hueL = hsvValuesL[0];
+
+            if ((redR > 1000 && (hueR < 10 || hueR > 350)) || (blueR > 1000 && (hueR < 230 && hueR > 190)))
+                rightValue = 0;
+
+            if ((redL > 1000 && (hueL < 10 || hueL > 350)) || (blueL > 1000 && (hueL < 230 && hueL > 190)))
+                leftValue = 0;
+
+            setMotorPowers(rightValue, leftValue);
+
+            runningOpMode.displayTelemetry("hueR: " + hueR + "\nhueL: " + hueL);
         }
+
+        setMotorPowers(0);
     }
 }

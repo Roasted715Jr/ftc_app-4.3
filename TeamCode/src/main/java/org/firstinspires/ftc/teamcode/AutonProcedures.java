@@ -43,6 +43,7 @@ class AutonProcedures<T extends GenericOpMode> {
 //    private static final int ANGLE_TOLERANCE = 40;
     private static final double TURN_SPEED = 0.25;
 
+    private int degToBlock = 0;
 //    private double startYaw, endYaw;
     private ElapsedTime elapsedTime;
 //    enum StartPosition {
@@ -79,13 +80,13 @@ class AutonProcedures<T extends GenericOpMode> {
     void start() {
         runningOpMode.displayTelemetry("Deploying");
         deploy();
-//        displayTelemetry("Going to block");
-//        goToBlock();
-//        displayTelemetry("Going to depot");
-//        goToDepot();
-//        displayTelemetry("Parking");
-//        park();
-//        displayTelemetry("Done");
+        runningOpMode.displayTelemetry("Going to block");
+        goToBlock();
+        runningOpMode.displayTelemetry("Going to depot");
+        goToDepot();
+        runningOpMode.displayTelemetry("Parking");
+        park();
+        runningOpMode.displayTelemetry("Done");
     }
 
     private void deploy() {
@@ -97,29 +98,39 @@ class AutonProcedures<T extends GenericOpMode> {
     private void goToBlock() {
         blockPos = getBlockPos(1000);
 
-        runningOpMode.displayTelemetry("blockPos: " + blockPos);
+//        runningOpMode.displayTelemetry("blockPos: " + blockPos);
 
         if (blockPos == RIGHT_POSITION) {
             degToTurn = -20;
-            blockDist = 32;
+//            blockDist = 32;
+            blockDist = 26;
         } else if (blockPos == LEFT_POSITION) {
             degToTurn = 20;
-            blockDist = 32;
-        } else if (blockPos == CENTER_POSITION) {
-            blockDist = 30;
-        }
+//            blockDist = 32;
+            blockDist = 26;
+        } else if (blockPos == CENTER_POSITION)
+//            blockDist = 30;
+            blockDist = 24;
 
-        squareUp();
-
-        robot.goDistance(3, 1);
+        robot.goDistance(6, 1);
+//
         new Thread(new Runnable() {
             @Override
             public void run() {
                 robot.liftRetract();
             }
         }).start();
+
         if (blockPos != CENTER_POSITION)
-            robot.turnDegrees(degToTurn, TURN_SPEED);
+            robot.turnDegrees(degToBlock * 0.6, TURN_SPEED);
+//
+//        getBlockPos(500);
+//
+//        runningOpMode.displayTelemetry("degToBlock: " + degToBlock);
+//
+//        if (blockPos != CENTER_POSITION)
+        //This decimal is to center up
+//            robot.turnDegrees(degToBlock * 0.6, TURN_SPEED);
         robot.goDistance(blockDist, 1);
     }
 
@@ -152,8 +163,8 @@ class AutonProcedures<T extends GenericOpMode> {
                         // yes there's a mass center using Imgproc.moments but w/e
                         Rect boundingRect = Imgproc.boundingRect(contours.get(i));
 
-                        double boundingRectX = (boundingRect.x + boundingRect.width) / 2;
-                        double boundingRectY = (boundingRect.y + boundingRect.height) / 2;
+                        double boundingRectX = (boundingRect.x + boundingRect.width) / 2.0;
+                        double boundingRectY = (boundingRect.y + boundingRect.height) / 2.0;
 
                         if (boundingRectY <= IMG_CUTOFF_Y) {
                             if (boundingRectX < IMG_FIRST_SECTION_X - 10)
@@ -166,8 +177,11 @@ class AutonProcedures<T extends GenericOpMode> {
                                 lCounter++;
 
 //                            telemetry.addData("Coordinates", "(" + boundingRectX + ", " + boundingRectY + ")");
+                            degToBlock = (int) (-39 * ((200 - boundingRectX) / 200));
                         }
                     }
+
+//                    runningOpMode.displayTelemetry("Number of yellows found: " + (rCounter + lCounter + cCounter));
                 }
             }));
 
@@ -186,18 +200,15 @@ class AutonProcedures<T extends GenericOpMode> {
 //        telemetry.addData("blockPos1", blockPos);
 //        telemetry.update();
 
+
         return blockPos;
-    }
-
-    private void squareUp() {
-
     }
 
     private void goToDepot() {
         if (startPosition == CRATER_START) {
             //Move away from the block
 //            robot.goDistance(-blockDist + 5, 1);
-            robot.goDistance(-blockDist + 20, 1);
+            robot.goDistance(-blockDist + 18, 1);
 //            robot.turnToDegree(45, TURN_SPEED);
             robot.turnToDegree(90, TURN_SPEED);
             robot.goDistance(40, 1);
@@ -216,30 +227,30 @@ class AutonProcedures<T extends GenericOpMode> {
     }
 
     private void dropIdol() {
-//        int red;
-//        int blue;
-//        float[] hsvValues = new float[3];
-//        float hue;
+        int red;
+        int blue;
+        float[] hsvValues = new float[3];
+        float hue;
 
-//        robot.setMotorPowers(0.75);
+        robot.setMotorPowers(0.75);
 
-//        while (true) {
-//            red = robot.leftSensor.red();
-//            blue = robot.leftSensor.blue();
-//
-//            Color.RGBToHSV(robot.leftSensor.red(),
-//                     robot.leftSensor.green(),
-//                    robot.leftSensor.blue(),
-//                    hsvValues);
-//            hue = hsvValues[0];
-//
-//            if (red > 1000 && (hue < 10 || hue > 350))
-//                break;
-//            else if (blue > 1000 && (hue < 230 && hue > 190))
-//                break;
-//        }
+        while (true) {
+            red = robot.leftSensor.red();
+            blue = robot.leftSensor.blue();
 
-        robot.waitForTape();
+            Color.RGBToHSV(robot.leftSensor.red(),
+                     robot.leftSensor.green(),
+                    robot.leftSensor.blue(),
+                    hsvValues);
+            hue = hsvValues[0];
+
+            if (red > 1000 && (hue < 10 || hue > 350))
+                break;
+            else if (blue > 1000 && (hue < 230 && hue > 190))
+                break;
+        }
+
+//        robot.waitForTape();
 
         if (startPosition == DEPOT_START)
             robot.goDistance(12, 0.5);
