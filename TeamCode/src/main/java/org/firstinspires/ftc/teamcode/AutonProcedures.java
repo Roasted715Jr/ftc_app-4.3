@@ -78,20 +78,22 @@ class AutonProcedures<T extends GenericOpMode> {
     }
 
     void start() {
-        runningOpMode.displayTelemetry("Deploying");
-        deploy();
-        runningOpMode.displayTelemetry("Going to block");
-        goToBlock();
-        runningOpMode.displayTelemetry("Going to depot");
-        goToDepot();
-        runningOpMode.displayTelemetry("Parking");
-        park();
-        runningOpMode.displayTelemetry("Done");
+//        runningOpMode.displayTelemetry("Deploying");
+//        deploy();
+//        runningOpMode.displayTelemetry("Going to block");
+//        goToBlock();
+//        runningOpMode.displayTelemetry("Going to depot");
+//        goToDepot();
+//        runningOpMode.displayTelemetry("Parking");
+//        park();
+//        runningOpMode.displayTelemetry("Done");
+
+        getBlockPos(1000);
     }
 
     private void deploy() {
         robot.liftReset();
-        robot.liftExtendFull(elapsedTime);
+        robot.liftExtendFull();
         //We have the retract code after we start moving to make sure we don't start retracting before we move (it is in the goToBlock function now)
     }
 
@@ -122,7 +124,7 @@ class AutonProcedures<T extends GenericOpMode> {
         }).start();
 
         if (blockPos != CENTER_POSITION)
-            robot.turnDegrees(degToBlock * 0.6, TURN_SPEED);
+            robot.turnDegrees(degToBlock * 0.6, TURN_SPEED); //Why this turning works after moving forward, idk, and idc
 //
 //        getBlockPos(500);
 //
@@ -167,16 +169,20 @@ class AutonProcedures<T extends GenericOpMode> {
                         double boundingRectY = (boundingRect.y + boundingRect.height) / 2.0;
 
                         if (boundingRectY <= IMG_CUTOFF_Y) {
-                            if (boundingRectX < IMG_FIRST_SECTION_X - 10)
+                            if (boundingRectX < IMG_FIRST_SECTION_X - 10) {
                                 rCounter++; //These are reversed now that the camera will be upside down
 //                            else if (boundingRectX > IMG_FIRST_SECTION_X + 75 && boundingRectX < IMG_THIRD_SECTION_X - 75)
 //                                dcCounter++;
-                            else if (boundingRectX > IMG_FIRST_SECTION_X + 10 && boundingRectX < IMG_THIRD_SECTION_X - 10)
+                            } else if (boundingRectX > IMG_FIRST_SECTION_X + 10 && boundingRectX < IMG_THIRD_SECTION_X - 10) {
                                 cCounter++;
-                            else if (boundingRectX > IMG_THIRD_SECTION_X + 10)
+                            } else if (boundingRectX > IMG_THIRD_SECTION_X + 10)
                                 lCounter++;
 
-//                            telemetry.addData("Coordinates", "(" + boundingRectX + ", " + boundingRectY + ")");
+                            //R (35 +- 5, 170 +- 15)
+                            //C (200 +- 5, 1175 +- 5)
+                            //L (360, 180 +- 5)
+
+                            runningOpMode.displayTelemetry("(" + boundingRectX + ", " + boundingRectY + ")");
                             degToBlock = (int) (-39 * ((200 - boundingRectX) / 200));
                         }
                     }
@@ -208,12 +214,12 @@ class AutonProcedures<T extends GenericOpMode> {
         if (startPosition == CRATER_START) {
             //Move away from the block
 //            robot.goDistance(-blockDist + 5, 1);
-            robot.goDistance(-blockDist + 18, 1);
+            robot.goDistance(-blockDist + 16, 1);
 //            robot.turnToDegree(45, TURN_SPEED);
-            robot.turnToDegree(90, TURN_SPEED);
+            robot.turnToDegree(85, TURN_SPEED);
             robot.goDistance(40, 1);
 //            robot.turnDegrees(55, TURN_SPEED);
-            robot.turnDegrees(15, TURN_SPEED);
+            robot.turnDegrees(18, TURN_SPEED);
 //            robot.turnDegrees(10, TURN_SPEED, TURN_SPEED * 2);
         } else
             if (blockPos != CENTER_POSITION)

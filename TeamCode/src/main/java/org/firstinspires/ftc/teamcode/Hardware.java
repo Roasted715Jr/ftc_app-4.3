@@ -199,8 +199,7 @@ public class Hardware<T extends GenericOpMode> {
         setMotorPowers(0);
     }
 
-    void liftExtendFull(ElapsedTime elapsedTime) {
-        elapsedTime.reset();
+    void liftExtendFull() {
 //        liftToPos(8500, elapsedTime);
         liftToPos(8650); //8300, 8500
     }
