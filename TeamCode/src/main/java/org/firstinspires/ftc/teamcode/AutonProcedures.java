@@ -32,7 +32,7 @@ class AutonProcedures<T extends GenericOpMode> {
 //    private static final int[] MIN_RED = {80, 30, 30};
 //    private static final int[] MAX_RED = {90, 50, 45};
 
-    private static final int IMG_CUTOFF_Y = 300; //115
+    private static final int IMG_CUTOFF_Y = 200; //300
     private static final int IMG_FIRST_SECTION_X = 110;
     private static final int IMG_THIRD_SECTION_X = 290;
     private static final double FIND_BLOCK_SPEED = 0.2;
@@ -53,8 +53,8 @@ class AutonProcedures<T extends GenericOpMode> {
     private GoldVision goldVision;
     private Hardware robot;
     private HardwareMap hardwareMap;
-    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND, degToTurn = 22, blockDist, startPosition;
-//    private StartPosition startPosition;
+    private int cCounter, dcCounter, lCounter, rCounter, blockPos = BLOCK_NOT_FOUND, blockPosRel = BLOCK_NOT_FOUND, degToTurn = 22, blockDist, startPos;
+//    private StartPosition startPos;
     private T runningOpMode;
     private VuforiaLocalizer vuforia;
 
@@ -62,7 +62,7 @@ class AutonProcedures<T extends GenericOpMode> {
         this.elapsedTime = elapsedTime;
         this.robot = robot;
         this.hardwareMap = hardwareMap;
-        this.startPosition = startPosition;
+        this.startPos = startPosition;
         this.runningOpMode = runningOpMode;
 
         robot.init(hardwareMap);
@@ -78,15 +78,20 @@ class AutonProcedures<T extends GenericOpMode> {
     }
 
     void start() {
-//        runningOpMode.displayTelemetry("Deploying");
+//        runningOpMode.addTelemetry("Deploying");
+//        runningOpMode.updateTelemetry();
 //        deploy();
-//        runningOpMode.displayTelemetry("Going to block");
+//        runningOpMode.addTelemetry("Going to block");
+//        runningOpMode.updateTelemetry();
 //        goToBlock();
-//        runningOpMode.displayTelemetry("Going to depot");
+//        runningOpMode.addTelemetry("Going to depot");
+//        runningOpMode.updateTelemetry();
 //        goToDepot();
-//        runningOpMode.displayTelemetry("Parking");
+//        runningOpMode.addTelemetry("Parking");
+//        runningOpMode.updateTelemetry();
 //        park();
-//        runningOpMode.displayTelemetry("Done");
+//        runningOpMode.addTelemetry("Done");
+//        runningOpMode.updateTelemetry();
 
         getBlockPos(1000);
     }
@@ -100,16 +105,14 @@ class AutonProcedures<T extends GenericOpMode> {
     private void goToBlock() {
         blockPos = getBlockPos(1000);
 
-//        runningOpMode.displayTelemetry("blockPos: " + blockPos);
-
         if (blockPos == RIGHT_POSITION) {
             degToTurn = -20;
 //            blockDist = 32;
-            blockDist = 26;
+            blockDist = 28;
         } else if (blockPos == LEFT_POSITION) {
             degToTurn = 20;
 //            blockDist = 32;
-            blockDist = 26;
+            blockDist = 28;
         } else if (blockPos == CENTER_POSITION)
 //            blockDist = 30;
             blockDist = 24;
@@ -123,8 +126,12 @@ class AutonProcedures<T extends GenericOpMode> {
             }
         }).start();
 
-        if (blockPos != CENTER_POSITION)
-            robot.turnDegrees(degToBlock * 0.6, TURN_SPEED); //Why this turning works after moving forward, idk, and idc
+        if (blockPos != CENTER_POSITION) {
+            if (startPos == CRATER_START)
+                robot.turnDegrees(degToBlock * 0.6); //Why this turning works after moving forward, idk, and idc
+            else
+                robot.turnDegrees(degToBlock * 0.7);
+        }
 //
 //        getBlockPos(500);
 //
@@ -179,17 +186,17 @@ class AutonProcedures<T extends GenericOpMode> {
                                 lCounter++;
 
                             //R (35 +- 5, 170 +- 15)
-                            //C (200 +- 5, 1175 +- 5)
+                            //C (200 +- 5, 175 +- 5)
                             //L (360, 180 +- 5)
 
-                            runningOpMode.displayTelemetry("(" + boundingRectX + ", " + boundingRectY + ")");
+                            runningOpMode.addTelemetry("(" + boundingRectX + ", " + boundingRectY + ")");
+//                            runningOpMode.addTelemetry("Number of yellows found: " + (rCounter + lCounter + cCounter));
                             degToBlock = (int) (-39 * ((200 - boundingRectX) / 200));
                         }
                     }
-
-//                    runningOpMode.displayTelemetry("Number of yellows found: " + (rCounter + lCounter + cCounter));
                 }
             }));
+        runningOpMode.updateTelemetry();
 
         if (rCounter > cCounter)
             if (rCounter > lCounter)
@@ -203,33 +210,35 @@ class AutonProcedures<T extends GenericOpMode> {
         else if (cCounter > 0)
             blockPos = CENTER_POSITION;
 
-//        telemetry.addData("blockPos1", blockPos);
-//        telemetry.update();
-
+//        runningOpMode.addTelemetry("blockPos: " + blockPos);
+//        runningOpMode.updateTelemetry();
 
         return blockPos;
     }
 
     private void goToDepot() {
-        if (startPosition == CRATER_START) {
+        if (startPos == CRATER_START) {
             //Move away from the block
 //            robot.goDistance(-blockDist + 5, 1);
             robot.goDistance(-blockDist + 16, 1);
 //            robot.turnToDegree(45, TURN_SPEED);
-            robot.turnToDegree(85, TURN_SPEED);
+            robot.turnToDegree(85);
             robot.goDistance(40, 1);
 //            robot.turnDegrees(55, TURN_SPEED);
-            robot.turnDegrees(18, TURN_SPEED);
+            robot.turnDegrees(15);
 //            robot.turnDegrees(10, TURN_SPEED, TURN_SPEED * 2);
         } else
             if (blockPos != CENTER_POSITION)
-                robot.turnDegrees(degToTurn * -2, TURN_SPEED);
+                robot.turnDegrees(degToBlock * -2 * 0.7);
+
+        runningOpMode.addTelemetry("blockPos: " + blockPos);
+        runningOpMode.updateTelemetry();
 
 //        robot.goDistance(9, 1);
         dropIdol();
 
-        if (startPosition == CRATER_START)
-            robot.turnToDegree(135, TURN_SPEED);
+        if (startPos == CRATER_START)
+            robot.turnToDegree(135);
     }
 
     private void dropIdol() {
@@ -258,7 +267,7 @@ class AutonProcedures<T extends GenericOpMode> {
 
 //        robot.waitForTape();
 
-        if (startPosition == DEPOT_START)
+        if (startPos == DEPOT_START)
             robot.goDistance(12, 0.5);
 
         robot.setMotorPowers(0);
@@ -287,12 +296,12 @@ class AutonProcedures<T extends GenericOpMode> {
 //    }
 
     private void park() {
-        if (startPosition == CRATER_START)
+        if (startPos == CRATER_START)
             robot.goDistance(-77, 1);
         else {
-            robot.turnToDegree(-60, TURN_SPEED);
+            robot.turnToDegree(-60);
             robot.goDistance(-20, 1);
-            robot.turnToDegree(-50, TURN_SPEED);
+            robot.turnToDegree(-50);
             robot.goDistance(-57, 1);
         }
 

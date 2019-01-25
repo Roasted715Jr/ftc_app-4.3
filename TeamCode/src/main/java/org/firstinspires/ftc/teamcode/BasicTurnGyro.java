@@ -25,7 +25,7 @@ public class BasicTurnGyro extends GenericOpMode {
         int deg = 22;
         double speed = 0.25;
 //        robot.turnDegrees(deg, speed);
-        robot.turnToDegree(deg, speed);
+        robot.turnToDegree(deg);
 
 //        robot.goDistance(36, 1);
 //        robot.turnToDegree(deg, speed);

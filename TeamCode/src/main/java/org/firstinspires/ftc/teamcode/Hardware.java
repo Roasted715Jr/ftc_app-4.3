@@ -23,7 +23,8 @@ public class Hardware<T extends GenericOpMode> {
     private static final double WHEEL_CIRCUMFERENCE_INCH = WHEEL_DIAMETER_INCH * Math.PI;
     private static final int REV_CORE_HEX_COUNTS_PER_REVOLUTION = 288;
     private static final int NEVEREST_40_COUNTS_PER_REVOLUTION = 1120;
-//    private static final int NEVEREST_20_COUNTS_PER_REVOLUTION = 537; //Is actually 537.6, but setting the motors requires an int so it will truncate to 537 anyways
+    //    private static final int NEVEREST_20_COUNTS_PER_REVOLUTION = 537; //Is actually 537.6, but setting the motors requires an int so it will truncate to 537 anyways
+    private static final double TURN_SPEED = 0.25;
 
     private static final int COMP_BOT = 0;
     private static final int MATT_TINY_BOT = 1;
@@ -228,7 +229,8 @@ public class Hardware<T extends GenericOpMode> {
         setLiftPower(1);
 
         while (liftMotor.isBusy()) {
-            runningOpMode.displayTelemetry("liftMotor Position: " + -(liftMotor.getCurrentPosition()) + ", aiming for " + counts);
+            runningOpMode.addTelemetry("liftMotor Position: " + -(liftMotor.getCurrentPosition()) + ", aiming for " + counts);
+            runningOpMode.updateTelemetry();
         }
 
         setLiftPower(0);
@@ -295,7 +297,7 @@ public class Hardware<T extends GenericOpMode> {
         lifterBtnListener.stop();
     }
 
-    void turnDegrees(double degreesToTurn, double speed) {
+    void turnDegrees(double degreesToTurn) {
         double startYaw = getYaw();
         double target = startYaw + degreesToTurn;
 
@@ -305,44 +307,25 @@ public class Hardware<T extends GenericOpMode> {
 
         if (degreesToTurn < 0) { //Turn right
             while (getYaw() > target)
-                setMotorPowers(-speed, speed);
+                setMotorPowers(-TURN_SPEED, TURN_SPEED);
             setMotorPowers(0);
         } else { //Turn left
             while (getYaw() < target)
-                setMotorPowers(speed, -speed);
+                setMotorPowers(TURN_SPEED, -TURN_SPEED);
             setMotorPowers(0);
         }
     }
 
-    void turnDegrees(double degreesToTurn, double leftPower, double rightPower) {
-        double startYaw = getYaw();
-        double target = startYaw + degreesToTurn;
-
-//        Log.i(TAG, "Target: " + target);
-//        Log.i(TAG, "Start Yaw: " + startYaw);
-//        Log.i(TAG, "Degreees to Turn: " + degreesToTurn);
-
-        if (degreesToTurn < 0) { //Turn right
-            while (getYaw() > target)
-                setMotorPowers(rightPower, leftPower);
-            setMotorPowers(0);
-        } else { //Turn left
-            while (getYaw() < target)
-                setMotorPowers(rightPower, leftPower);
-            setMotorPowers(0);
-        }
-    }
-
-    void turnToDegree(double target, double speed) {
+    void turnToDegree(double target) {
         double startYaw = getYaw();
 
         if (startYaw > target) { //Turn right
             while (getYaw() > target)
-                setMotorPowers(-speed, speed);
+                setMotorPowers(-TURN_SPEED, TURN_SPEED);
             setMotorPowers(0);
         } else { //Turn left
             while (getYaw() < target)
-                setMotorPowers(speed, -speed);
+                setMotorPowers(TURN_SPEED, -TURN_SPEED);
             setMotorPowers(0);
         }
     }
@@ -381,7 +364,7 @@ public class Hardware<T extends GenericOpMode> {
 
             setMotorPowers(rightValue, leftValue);
 
-            runningOpMode.displayTelemetry("hueR: " + hueR + "\nhueL: " + hueL);
+            runningOpMode.addTelemetry("hueR: " + hueR + "\nhueL: " + hueL);
         }
 
         setMotorPowers(0);

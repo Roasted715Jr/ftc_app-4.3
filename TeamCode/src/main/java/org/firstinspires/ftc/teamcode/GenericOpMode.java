@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 abstract class GenericOpMode extends LinearOpMode {
     GenericOpMode() {}
 
-    public void displayTelemetry(String msg) {
-        telemetry.addData("Auton Crater", msg);
+    void addTelemetry(String msg) {
+        telemetry.addData("Autonomous", msg);
+    }
+
+    void updateTelemetry() {
         telemetry.update();
     }
 
