@@ -233,8 +233,8 @@ class AutonProcedures<T extends GenericOpMode> {
             if (blockPos != CENTER_POSITION)
                 robot.turnDegrees(degToTurn * -2);
 
-        runningOpMode.addTelemetry("blockPos: " + blockPos);
-        runningOpMode.updateTelemetry();
+//        runningOpMode.addTelemetry("blockPos: " + blockPos);
+//        runningOpMode.updateTelemetry();
 
 //        robot.goDistance(9, 1);
         dropIdol();

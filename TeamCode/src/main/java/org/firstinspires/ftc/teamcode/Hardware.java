@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -49,7 +50,8 @@ public class Hardware<T extends GenericOpMode> {
     DcMotor rightMotor;
     DcMotor leftMotor;
     DcMotor liftMotor;
-    private Servo baseServo, tapeServo;
+    private Servo baseServo;
+    private CRServo tapeServo, tapeControl;
     private T runningOpMode;
     private Thread lifterBtnListener;
     private TouchSensor lifterBtn;
@@ -93,7 +95,8 @@ public class Hardware<T extends GenericOpMode> {
                 rightSensor = hardwareMap.get(ColorSensor.class, "rightSensor");
                 leftSensor = hardwareMap.get(ColorSensor.class, "leftSensor");
                 baseServo = hardwareMap.get(Servo.class, "baseServo");
-                tapeServo = hardwareMap.get(Servo.class, "tapeServo");
+                tapeServo = hardwareMap.get(CRServo.class, "tapeServo");
+                tapeControl = hardwareMap.get(CRServo.class, "tapeControl");
 
                 //Parameters will already be defined in the scope... the scope spans between all the cases, but you can't do anything outside a case :/
                 parameters = new BNO055IMU.Parameters();
@@ -159,6 +162,14 @@ public class Hardware<T extends GenericOpMode> {
 
     Servo getBaseServo() {
         return baseServo;
+    }
+
+    CRServo getTapeServo() {
+        return tapeServo;
+    }
+
+    CRServo getTapeControl() {
+        return tapeControl;
     }
 
     WebcamName getWebcam() {
