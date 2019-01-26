@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Servo", group = "CompBot")
@@ -20,7 +19,7 @@ public class BasicServoMovement extends GenericOpMode {
         robot.moveServo(1);
 
         while (opModeIsActive()) {
-            telemetry.addData("servoPos", robot.getServo().getPosition());
+            telemetry.addData("servoPos", robot.getBaseServo().getPosition());
             telemetry.update();
         }
     }

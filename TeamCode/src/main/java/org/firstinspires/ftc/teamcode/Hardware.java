@@ -49,8 +49,8 @@ public class Hardware<T extends GenericOpMode> {
     DcMotor rightMotor;
     DcMotor leftMotor;
     DcMotor liftMotor;
-    private Servo servo;
-    T runningOpMode;
+    private Servo baseServo, tapeServo;
+    private T runningOpMode;
     private Thread lifterBtnListener;
     private TouchSensor lifterBtn;
 
@@ -92,8 +92,8 @@ public class Hardware<T extends GenericOpMode> {
 
                 rightSensor = hardwareMap.get(ColorSensor.class, "rightSensor");
                 leftSensor = hardwareMap.get(ColorSensor.class, "leftSensor");
-                servo = hardwareMap.get(Servo.class, "servo");
-//                lifterBtn = hardwareMap.get(TouchSensor.class, "lifterBtn");
+                baseServo = hardwareMap.get(Servo.class, "baseServo");
+                tapeServo = hardwareMap.get(Servo.class, "tapeServo");
 
                 //Parameters will already be defined in the scope... the scope spans between all the cases, but you can't do anything outside a case :/
                 parameters = new BNO055IMU.Parameters();
@@ -157,8 +157,8 @@ public class Hardware<T extends GenericOpMode> {
         return WHEEL_CIRCUMFERENCE_INCH;
     }
 
-    Servo getServo() {
-        return servo;
+    Servo getBaseServo() {
+        return baseServo;
     }
 
     WebcamName getWebcam() {
@@ -247,7 +247,7 @@ public class Hardware<T extends GenericOpMode> {
     }
 
     void moveServo(double pos) {
-        servo.setPosition(pos);
+        baseServo.setPosition(pos);
     }
 
     void setLiftPower(double liftSpeed) {

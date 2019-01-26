@@ -32,6 +32,8 @@ public class EasyTeleOp extends GenericOpMode {
 
             robot.setMotorPowers(rightValue, leftValue);
 
+            
+
             if (gamepad2.right_bumper)
                 robot.setLiftPower(0.75);
             else if (gamepad2.left_bumper)

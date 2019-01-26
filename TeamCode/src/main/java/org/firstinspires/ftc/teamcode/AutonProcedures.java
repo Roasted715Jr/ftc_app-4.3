@@ -78,22 +78,22 @@ class AutonProcedures<T extends GenericOpMode> {
     }
 
     void start() {
-//        runningOpMode.addTelemetry("Deploying");
-//        runningOpMode.updateTelemetry();
-//        deploy();
-//        runningOpMode.addTelemetry("Going to block");
-//        runningOpMode.updateTelemetry();
-//        goToBlock();
-//        runningOpMode.addTelemetry("Going to depot");
-//        runningOpMode.updateTelemetry();
-//        goToDepot();
-//        runningOpMode.addTelemetry("Parking");
-//        runningOpMode.updateTelemetry();
-//        park();
-//        runningOpMode.addTelemetry("Done");
-//        runningOpMode.updateTelemetry();
+        runningOpMode.addTelemetry("Deploying");
+        runningOpMode.updateTelemetry();
+        deploy();
+        runningOpMode.addTelemetry("Going to block");
+        runningOpMode.updateTelemetry();
+        goToBlock();
+        runningOpMode.addTelemetry("Going to depot");
+        runningOpMode.updateTelemetry();
+        goToDepot();
+        runningOpMode.addTelemetry("Parking");
+        runningOpMode.updateTelemetry();
+        park();
+        runningOpMode.addTelemetry("Done");
+        runningOpMode.updateTelemetry();
 
-        getBlockPos(1000);
+//        getBlockPos(1000);
     }
 
     private void deploy() {
@@ -128,9 +128,10 @@ class AutonProcedures<T extends GenericOpMode> {
 
         if (blockPos != CENTER_POSITION) {
             if (startPos == CRATER_START)
-                robot.turnDegrees(degToBlock * 0.6); //Why this turning works after moving forward, idk, and idc
+//                robot.turnDegrees(degToBlock * 0.6); //Why this turning works after moving forward, idk, and idc
+                robot.turnDegrees(degToTurn); //Why this turning works after moving forward, idk, and idc
             else
-                robot.turnDegrees(degToBlock * 0.7);
+                robot.turnDegrees(degToTurn);
         }
 //
 //        getBlockPos(500);
@@ -189,14 +190,15 @@ class AutonProcedures<T extends GenericOpMode> {
                             //C (200 +- 5, 175 +- 5)
                             //L (360, 180 +- 5)
 
-                            runningOpMode.addTelemetry("(" + boundingRectX + ", " + boundingRectY + ")");
+//                            runningOpMode.addTelemetry("(" + boundingRectX + ", " + boundingRectY + ")");
 //                            runningOpMode.addTelemetry("Number of yellows found: " + (rCounter + lCounter + cCounter));
                             degToBlock = (int) (-39 * ((200 - boundingRectX) / 200));
                         }
                     }
                 }
             }));
-        runningOpMode.updateTelemetry();
+
+//        runningOpMode.updateTelemetry();
 
         if (rCounter > cCounter)
             if (rCounter > lCounter)
@@ -229,7 +231,7 @@ class AutonProcedures<T extends GenericOpMode> {
 //            robot.turnDegrees(10, TURN_SPEED, TURN_SPEED * 2);
         } else
             if (blockPos != CENTER_POSITION)
-                robot.turnDegrees(degToBlock * -2 * 0.7);
+                robot.turnDegrees(degToTurn * -2);
 
         runningOpMode.addTelemetry("blockPos: " + blockPos);
         runningOpMode.updateTelemetry();
