@@ -269,19 +269,20 @@ class AutonProcedures<T extends GenericOpMode> {
 
 //        robot.waitForTape();
 
-        if (startPos == DEPOT_START)
-            robot.goDistance(12, 0.5);
-
         robot.setMotorPowers(0);
 
         robot.moveServo(0);
+
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        robot.moveServo(1);
+        if (startPos == DEPOT_START)
+            robot.goDistance(6, 0.5);
+//
+//        robot.moveServo(1);
     }
 
 //    private boolean isBetween(int[] val, int[] min, int[] max) {
