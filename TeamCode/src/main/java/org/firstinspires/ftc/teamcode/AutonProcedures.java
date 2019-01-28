@@ -280,7 +280,7 @@ class AutonProcedures<T extends GenericOpMode> {
         }
 
         if (startPos == DEPOT_START)
-            robot.goDistance(6, 0.5);
+            robot.goDistance(9, 0.5);
 //
 //        robot.moveServo(1);
     }
