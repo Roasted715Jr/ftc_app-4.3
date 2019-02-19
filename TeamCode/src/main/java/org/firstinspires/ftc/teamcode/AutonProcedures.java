@@ -285,19 +285,6 @@ class AutonProcedures<T extends GenericOpMode> {
 //        robot.moveServo(1);
     }
 
-//    private boolean isBetween(int[] val, int[] min, int[] max) {
-//        boolean isBetween = true;
-//
-//        for (int i = 0; i < val.length; i++) {
-//            if (!(min[i] <= val[i] && val[i] <= max[i])) {
-//                isBetween = false;
-//                break;
-//            }
-//        }
-//
-//        return isBetween;
-//    }
-
     private void park() {
         if (startPos == CRATER_START)
             robot.goDistance(-77, 1);
