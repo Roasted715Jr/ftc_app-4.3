@@ -46,10 +46,6 @@ class AutonProcedures<T extends GenericOpMode> {
     private int degToBlock = 0;
 //    private double startYaw, endYaw;
     private ElapsedTime elapsedTime;
-//    enum StartPosition {
-//        CRATER,
-//        DEPOT
-//    }
     private GoldVision goldVision;
     private Hardware robot;
     private HardwareMap hardwareMap;

@@ -32,17 +32,10 @@ public class Hardware<T extends GenericOpMode> {
     private static final int TINY_BOT = 2;
     private static final int robotType = COMP_BOT;
 
-
     static final String VUFORIA_LICENSE_KEY = "Abq1tHr/////AAABmYC8ioniS0f2gyQRx7fZlTWMwyYcrV/bnslJvcDe0AhxA/GAkYTIdNbPWjYtplipzvASUZRGR+AoGDI1dKyuCFCc4qy1eVbx8NO4nuAKzeGoncY7acvfol19suW5Zl29E+APEV0CG4GVBe4R+bZ/Xyd2E7CZ7AcrLbWM8+SJiMCDnxJa3J0ozBHMPMs6GNFyYS6YCVNMkFcLEKxDicwXqpuJddG5XenbAs8ot9UT11WRYZjpprLkSRtM1/OyigcUeb0wk2PL6lFVBMHMZbWK5HkJEmBoN5+v2fP6zouj0GPGyEh/eV8Xe71LhBz0WXKd180hUCowZVBfdsTtuYwFiBkAyRLtiQQb4/b80sAx1b6s";
 
     private static int PINION_TEETH;
     private static int SPUR_TEETH;
-
-//    enum RobotType {
-//        MATT_TINY_BOT,
-//        COMP_BOT,
-//        TINY_BOT
-//    }
 
     private BNO055IMU imu;
     ColorSensor rightSensor, leftSensor;

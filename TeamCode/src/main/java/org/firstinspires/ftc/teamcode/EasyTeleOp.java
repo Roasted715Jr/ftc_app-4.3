@@ -31,6 +31,8 @@ public class EasyTeleOp extends GenericOpMode {
 
             rightValue = (-gamepad1.left_stick_y - gamepad1.right_stick_x) * speedMultiplier;
             leftValue = (-gamepad1.left_stick_y + gamepad1.right_stick_x) * speedMultiplier;
+//            rightValue = (-gamepad1.left_stick_y - gamepad1.left_stick_x) * speedMultiplier;
+//            leftValue = (-gamepad1.left_stick_y + gamepad1.left_stick_x) * speedMultiplier;
 
             robot.setMotorPowers(rightValue, leftValue);
 
