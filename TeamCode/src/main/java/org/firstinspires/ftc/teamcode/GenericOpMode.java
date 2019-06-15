@@ -18,4 +18,6 @@ abstract class GenericOpMode extends LinearOpMode {
             telemetry.update();
         }
     }
+
+    public abstract void runOpMode() throws InterruptedException;
 }
