@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Servo", group = "CompBot")
+@TeleOp(name = "Servo", group = "Auton Tests")
 @Disabled
 public class BasicServoMovement extends GenericOpMode {
     private Hardware<BasicServoMovement> robot = new Hardware<>(this);

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Turn w/ Gyro", group = "CompBot")
+@TeleOp(name = "Turn w/ Gyro", group = "Auton Tests")
 @Disabled
 public class BasicTurnGyro extends GenericOpMode {
     private static final int TAPE_NOT_FOUND = 0;

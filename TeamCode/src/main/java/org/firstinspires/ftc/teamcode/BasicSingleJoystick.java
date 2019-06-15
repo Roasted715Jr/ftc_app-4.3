@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Single Joystick", group = "CompBot")
+@TeleOp(name = "Single Joystick", group = "Auton Tests")
 @Disabled
 public class BasicSingleJoystick extends GenericOpMode {
     private static final int DEG_TOLERANCE = 5;

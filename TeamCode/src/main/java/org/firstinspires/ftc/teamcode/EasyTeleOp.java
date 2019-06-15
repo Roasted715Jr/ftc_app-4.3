@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Easy TeleOp", group = "CompBot")
+@TeleOp(name = "Rover Ruckus", group = "Rover Ruckus")
 public class EasyTeleOp extends GenericOpMode {
     private Hardware<EasyTeleOp> robot = new Hardware<>(this);
 

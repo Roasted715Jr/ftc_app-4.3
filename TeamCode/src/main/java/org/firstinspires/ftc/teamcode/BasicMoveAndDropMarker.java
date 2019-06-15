@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Autonomous(name = "Drop Marker", group = "CompBot")
+@Autonomous(name = "Drop Marker", group = "Auton Tests")
 @Disabled
 public class BasicMoveAndDropMarker extends GenericOpMode {
     private static final int TAPE_NOT_FOUND = 0;

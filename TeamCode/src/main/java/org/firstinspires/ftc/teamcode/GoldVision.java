@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-//import com.disnodeteam.dogecv.OpenCVPipeline;
 import org.corningrobotics.enderbots.endercv.OpenCVPipeline;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;

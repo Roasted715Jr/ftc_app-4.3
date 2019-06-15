@@ -22,7 +22,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
-@Autonomous(name = "Webcam Test", group = "CompBot")
+@Autonomous(name = "Webcam", group = "Auton Tests")
 @Disabled
 public class BasicWebcam extends GenericOpMode {
     private static final int BLOCK_NOT_FOUND = 0;

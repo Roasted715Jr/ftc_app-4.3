@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Lift Robot", group = "CompBot")
+@TeleOp(name = "Lift Robot", group = "Auton Tests")
 @Disabled
 public class BasicLiftRobot extends GenericOpMode {
     Hardware<BasicLiftRobot> robot = new Hardware<>(this);

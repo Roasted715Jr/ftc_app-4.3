@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "Tank", group = "CompBot")
+@TeleOp(name = "Tank Drive", group = "Rover Ruckus")
 public class TeleOpTank extends GenericOpMode {
     private Hardware<TeleOpTank> robot = new Hardware<>(this);
 

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Crater", group = "CompBot")
+@Autonomous(name = "Crater", group = "Rover Ruckus")
 public class AutonCrater extends GenericOpMode {
 
     private AutonProcedures<AutonCrater> autonProcedures = new AutonProcedures<>();
