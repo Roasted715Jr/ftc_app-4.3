@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-abstract class GenericOpMode extends LinearOpMode {
+public abstract class GenericOpMode extends LinearOpMode {
     void addTelemetry(String msg) {
         telemetry.addData("Autonomous", msg);
     }
@@ -11,7 +11,6 @@ abstract class GenericOpMode extends LinearOpMode {
         telemetry.update();
     }
 
-    @Override
     public void waitForStart() {
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Status", "Waiting in init");

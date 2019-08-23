@@ -4,10 +4,8 @@ import android.graphics.Bitmap;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ThreadPool;
-import com.sun.tools.javac.jvm.Gen;
 import com.vuforia.Frame;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
